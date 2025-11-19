@@ -359,17 +359,43 @@ You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link}
                 history_context += f"User: {exchange.get('user', '')}\n"
                 history_context += f"Assistant: {exchange.get('assistant', '')}\n"
         
-        prompt = f"""Given the chat history and current question, generate a clear, factual query optimized for retrieving information about mutual funds. Focus on key terms like fund name, metric names (expense ratio, exit load, etc.). Preserve the SPECIFIC nature of the question - if they ask for ONE metric, keep it focused on that ONE metric. Return only the refined query, nothing else.
+        prompt = f"""Given the chat history and current question, generate a clear, factual query optimized for retrieving information about mutual funds. 
+
+CRITICAL: Preserve the EXACT fund name mentioned (Large Cap, Flexi Cap, ELSS, Hybrid). Do not change or substitute fund names.
+
+Focus on key terms like fund name and metric names (expense ratio, exit load, etc.). Return only the refined query, nothing else.
 
 {history_context}
 
 Current question: {query}
 
-Refined query:"""
+Refined query (must include the exact fund name if mentioned):"""
         
         try:
-            system_prompt = "You are a query refinement assistant. Preserve the specificity of questions. Return only the refined query, no explanations."
-            refined = self._call_llm(prompt, max_tokens=100, temperature=0.1, system_prompt=system_prompt)
+            system_prompt = "You are a query refinement assistant. ALWAYS preserve exact fund names from the original question. Return only the refined query, no explanations."
+            refined = self._call_llm(prompt, max_tokens=100, temperature=0.05, system_prompt=system_prompt)
+            
+            # Safety check: ensure fund name is preserved
+            query_lower = query.lower()
+            refined_lower = refined.lower() if refined else ""
+            
+            fund_names = {
+                'large cap': 'HDFC Large Cap Fund',
+                'flexi cap': 'HDFC Flexi Cap Fund',
+                'flexicap': 'HDFC Flexi Cap Fund',
+                'elss': 'HDFC TaxSaver ELSS',
+                'taxsaver': 'HDFC TaxSaver ELSS',
+                'tax saver': 'HDFC TaxSaver ELSS',
+                'hybrid': 'HDFC Hybrid Equity Fund'
+            }
+            
+            # Check if fund name in original but missing in refined
+            for key, full_name in fund_names.items():
+                if key in query_lower and key not in refined_lower:
+                    # Fund name was lost, add it back
+                    refined = f"{full_name} {refined}" if refined else query
+                    break
+            
             return refined if refined else query
         except Exception as e:
             error_msg = str(e)
