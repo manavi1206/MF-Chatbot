@@ -29,24 +29,24 @@ st.markdown("""
         --groww-dark: #1E1E1E;
         --groww-text: #44475B;
         --groww-light-bg: #F5F7FA;
-    }
-    
-    /* Dark mode variables */
-    [data-theme="dark"] {
-        --bg-user: #262730;
-        --bg-assistant: #1E1E1E;
-        --border-color: #3D3D3D;
-        --text-color: #FAFAFA;
-        --shadow: rgba(255, 255, 255, 0.05);
-    }
-    
-    /* Light mode variables (default) */
-    [data-theme="light"], :root {
+        
+        /* Light mode (default) */
         --bg-user: #FAFBFC;
         --bg-assistant: #FFFFFF;
         --border-color: #EBEBEB;
         --text-color: #262730;
         --shadow: rgba(0, 0, 0, 0.03);
+    }
+    
+    /* Dark mode - using media query */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg-user: #262730;
+            --bg-assistant: #1E1E1E;
+            --border-color: #3D3D3D;
+            --text-color: #FAFAFA;
+            --shadow: rgba(255, 255, 255, 0.05);
+        }
     }
     
     /* Main content area */
