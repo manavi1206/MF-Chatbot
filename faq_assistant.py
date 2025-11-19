@@ -337,11 +337,16 @@ Answer:"""
             
         except Exception as e:
             print(f"Relevance check failed: {e}, falling back to keyword check")
-            # Fallback to keyword-based check
+            # Fallback to comprehensive keyword-based check
+            # This catches MF-related queries when LLM fails (e.g., API quota exceeded)
             mf_keywords = [
                 'mutual fund', 'mf', 'fund', 'scheme', 'nav', 'aum',
                 'expense ratio', 'exit load', 'sip', 'elss', 'lock-in',
-                'riskometer', 'benchmark', 'hdfc', 'investment'
+                'riskometer', 'benchmark', 'hdfc', 'investment',
+                'cas', 'statement', 'download', 'taxsaver', 'tax saver',
+                'large cap', 'flexi cap', 'flexicap', 'hybrid',
+                'minimum', 'how to invest', 'folio', 'redemption',
+                'dividend', 'growth', 'return', 'performance'
             ]
             return any(keyword in query_lower for keyword in mf_keywords)
     
@@ -744,7 +749,38 @@ Answer:"""
         if has_fund_mention or inferred_fund:
             return False, None
         
-        # Use LLM to detect if query needs fund specification
+        # Fast keyword check for general queries (skip LLM call)
+        general_query_keywords = [
+            'how to download', 'how to invest', 'what is elss lock-in',
+            'what funds', 'what schemes', 'what can you', 'how do i',
+            'riskometer', 'cas statement', 'tax report'
+        ]
+        
+        for keyword in general_query_keywords:
+            if keyword in query_lower:
+                # These are general queries, no clarification needed
+                return False, None
+        
+        # Fast keyword check for fund-specific queries (skip LLM call)
+        fund_specific_keywords = [
+            'expense ratio', 'exit load', 'minimum sip', 'minimum investment',
+            'fund manager', 'benchmark', 'nav', 'aum', 'return', 'performance',
+            'inception', 'launch date'
+        ]
+        
+        for keyword in fund_specific_keywords:
+            if keyword in query_lower:
+                # These queries need fund specification
+                clarification_msg = """Which fund would you like to know about?
+
+We cover:
+• HDFC Large Cap Fund
+• HDFC Flexi Cap Fund
+• HDFC TaxSaver (ELSS)
+• HDFC Hybrid Equity Fund"""
+                return True, clarification_msg
+        
+        # Only use LLM for truly ambiguous cases
         clarification_prompt = f"""Does this query need a specific mutual fund name to be answered?
 
 Query: "{query}"
