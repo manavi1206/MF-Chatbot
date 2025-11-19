@@ -775,7 +775,28 @@ Answer:"""
         # Stage 2: Generate answer
         answer = self.generate_answer(refined_query, chunks, citation_info['url'])
         
-        # Format response
+        # Check if LLM couldn't find the information
+        no_info_indicators = [
+            "document does not contain",
+            "information is not available",
+            "not found in the document",
+            "cannot find",
+            "does not include",
+            "not mentioned",
+            "unable to find",
+            "no information about",
+            "doesn't contain"
+        ]
+        
+        answer_lower = answer.lower()
+        has_no_info = any(indicator in answer_lower for indicator in no_info_indicators)
+        
+        if has_no_info:
+            # LLM couldn't find the info - return polite refusal without source
+            polite_refusal = f"I couldn't find information about that in my knowledge base for the HDFC funds I cover.\n\nI have detailed information about:\n• Expense ratios\n• Exit loads and lock-in periods\n• Minimum SIP amounts\n• Fund managers and benchmarks\n• How to invest and download statements\n\nPlease try asking about one of these topics, or rephrase your question."
+            return polite_refusal, None
+        
+        # Format response with citation (only if we have valid info)
         last_updated = self.rag_system.get_last_updated_date()
         formatted_answer = self.format_response(
             answer,
