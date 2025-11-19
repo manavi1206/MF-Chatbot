@@ -250,6 +250,27 @@ class FAQAssistant:
         
         return False
     
+    def is_coverage_query(self, query: str) -> bool:
+        """Detect queries asking about what funds/schemes we cover"""
+        query_lower = query.lower()
+        coverage_patterns = [
+            r'what (funds|schemes|mutual funds).*(do you|can you).*(have|cover|support|offer)',
+            r'which (funds|schemes|mutual funds).*(do you|can you).*(have|cover|support|offer)',
+            r'(what|which) (funds|schemes).*(available|covered)',
+            r'list.*(funds|schemes)',
+            r'show.*(funds|schemes)',
+            r'tell me.*(funds|schemes).*(you|we) (have|cover)',
+            r'(funds|schemes).*(you|we) (have|cover|support)',
+            r'coverage',
+            r'what.*schemes.*do.*have',
+            r'which.*schemes.*available'
+        ]
+        
+        for pattern in coverage_patterns:
+            if re.search(pattern, query_lower):
+                return True
+        return False
+    
     def is_out_of_context(self, query: str) -> bool:
         """Detect out-of-context queries (non-MF related)"""
         query_lower = query.lower()
@@ -313,9 +334,11 @@ class FAQAssistant:
         return False  # Default to factual if unsure
     
     def classify_query_type(self, query: str) -> str:
-        """Classify query type: greeting, out_of_context, advice, or factual"""
+        """Classify query type: greeting, coverage, out_of_context, advice, or factual"""
         if self.is_greeting(query):
             return 'greeting'
+        elif self.is_coverage_query(query):
+            return 'coverage'
         elif self.is_advice_query(query):
             return 'advice'
         elif self.is_out_of_context(query):
@@ -335,6 +358,33 @@ I can help you with factual questions about **HDFC Mutual Funds**, such as:
 • Fund details and investment objectives
 
 What would you like to know about HDFC Mutual Funds?"""
+    
+    def handle_coverage_query(self) -> str:
+        """Generate response about what funds we cover"""
+        return """I provide information about **4 HDFC Mutual Fund schemes**:
+
+**1. HDFC Large Cap Fund**
+   • Category: Large Cap Equity
+   • Investment Objective: Long-term capital growth from large-cap stocks
+
+**2. HDFC Flexi Cap Fund**
+   • Category: Flexi Cap Equity
+   • Investment Objective: Capital appreciation across market caps
+
+**3. HDFC TaxSaver (ELSS)**
+   • Category: Equity Linked Savings Scheme
+   • Investment Objective: Tax-saving with 3-year lock-in and equity growth
+
+**4. HDFC Hybrid Equity Fund**
+   • Category: Aggressive Hybrid
+   • Investment Objective: Balanced exposure to equity and debt
+
+You can ask me factual questions about any of these funds, such as:
+• Expense ratios and fees
+• Minimum SIP amounts
+• Exit loads and lock-in periods
+• Benchmarks and fund managers
+• How to invest or download statements"""
     
     def handle_out_of_context(self) -> str:
         """Generate out-of-context refusal response"""
@@ -612,6 +662,8 @@ Answer:"""
         
         if query_type == 'greeting':
             return self.handle_greeting(), None
+        elif query_type == 'coverage':
+            return self.handle_coverage_query(), None
         elif query_type == 'out_of_context':
             return self.handle_out_of_context(), None
         elif query_type == 'advice':
