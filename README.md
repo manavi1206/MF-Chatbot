@@ -202,15 +202,81 @@ streamlit run app.py
 
 ## Testing
 
-### Quick Test (5 queries)
+We provide multiple ways to test the chatbot comprehensively:
+
+### 1. Quick Health Check (10 Essential Tests) ⭐ Recommended
+Run this first to verify core functionality:
 ```bash
-python quick_test.py
+python quick_health_check.py
 ```
 
-### Full Test Suite (20+ queries)
+This tests:
+- ✅ Greetings
+- ✅ Coverage queries
+- ✅ Factual queries (expense ratio, ELSS lock-in, etc.)
+- ✅ Ambiguous queries (clarification)
+- ✅ Advice refusal
+- ✅ Out-of-context refusal
+- ✅ Meaningless query rejection
+- ✅ Fund-specific retrieval accuracy
+
+**Expected output:** 10/10 tests passing
+
+### 2. Comprehensive Test Cases (Manual Testing)
+For thorough edge case testing, use the checklist:
+```bash
+# View the comprehensive test cases
+cat comprehensive_test_cases.md
+```
+
+This includes:
+- 16 categories of test cases
+- 100+ individual test scenarios
+- Expected outcomes for each query
+- Common issues to watch for
+- Visual/UI validation checklist
+
+**Best for:** Production readiness verification
+
+### 3. Full Automated Test Suite (20+ queries)
 ```bash
 python test_queries.py
 ```
+
+### 4. Streamlit App Testing (Manual)
+Test directly in the UI:
+```bash
+streamlit run app.py
+```
+
+Then use the test cases from `comprehensive_test_cases.md` to verify:
+- Formatting (bullets, line breaks)
+- UI appearance (borders, shadows, spacing)
+- Source citations (clean URLs, no background)
+- Chat flow and context awareness
+
+### Testing Strategy
+
+**Before Deployment:**
+1. Run `python quick_health_check.py` → Should pass 10/10
+2. Test 5-10 queries manually in Streamlit UI
+3. Verify visual appearance matches design
+
+**After Deployment:**
+1. Test coverage query: "what can i ask you"
+2. Test factual query: "What is the expense ratio of HDFC Large Cap Fund?"
+3. Test refusal: "Should I invest in HDFC Large Cap?"
+4. Test rejection: "565665" (random numbers)
+5. Test ambiguous: "minimum sip amount" (no fund)
+
+**Common Issues to Watch:**
+- ❌ Wrong fund cited (asked Large Cap, got Flexi Cap)
+- ❌ Extra information (asked expense ratio, got AUM too)
+- ❌ Source on refusal (out-of-context shows HDFC document)
+- ❌ Wrong amount (minimum SIP shows "additional purchase")
+- ❌ Ugly URLs (tracking parameters like `?_gl=`)
+
+See `comprehensive_test_cases.md` for detailed issue reporting guidelines.
 
 ## Deployment
 
