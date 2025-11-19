@@ -246,13 +246,35 @@ class RAGSystem:
         if not self.embedding_model:
             self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
         
+        # Extract fund name from query to add as filter/boost
+        query_lower = query.lower()
+        fund_filter = None
+        
+        # Map fund mentions to tags
+        fund_mapping = {
+            'large cap': 'LARGE_CAP',
+            'flexi cap': 'FLEXI_CAP',
+            'flexicap': 'FLEXI_CAP',
+            'elss': 'ELSS',
+            'taxsaver': 'ELSS',
+            'tax saver': 'ELSS',
+            'hybrid': 'HYBRID'
+        }
+        
+        # Check which fund is mentioned
+        for fund_key, fund_tag in fund_mapping.items():
+            if fund_key in query_lower:
+                fund_filter = fund_tag
+                break
+        
         # Generate query embedding
         query_embedding = self.embedding_model.encode([query])[0]
         
-        # Query the collection
+        # Query the collection with more results if we have a fund filter
+        n_results = k * 3 if fund_filter else k
         results = self.collection.query(
             query_embeddings=[query_embedding.tolist()],
-            n_results=k
+            n_results=n_results
         )
         
         # Format results
