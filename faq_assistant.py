@@ -289,8 +289,11 @@ class FAQAssistant:
             return True
         
         # 2. Very short queries (1-2 characters) that aren't greetings
+        # BUT allow MF-related terms like "nav", "aum", "sip"
         if len(query_lower) <= 2 and not self.is_greeting(query_lower):
-            return True
+            mf_short_terms = ['mf', 'sip', 'nav', 'aum']
+            if query_lower not in mf_short_terms:
+                return True
         
         # 3. Only special characters or very short gibberish
         if len(query_lower) <= 3 and not any(c.isalpha() for c in query_lower):
@@ -495,21 +498,57 @@ For guidance on investment decisions, please consult a **registered financial ad
 You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link})."""
     
     def refine_query(self, query: str, chat_history: List[Dict[str, str]]) -> str:
-        """Stage 1: Refine query using LLM with chat history"""
+        """Stage 1: Refine query using LLM with chat history
+        
+        Infers fund context from recent chat history if not mentioned in current query.
+        """
+        query_lower = query.lower()
+        
+        # Check if query already has a fund name
+        fund_names = {
+            'large cap': 'HDFC Large Cap Fund',
+            'flexi cap': 'HDFC Flexi Cap Fund',
+            'flexicap': 'HDFC Flexi Cap Fund',
+            'elss': 'HDFC TaxSaver ELSS',
+            'taxsaver': 'HDFC TaxSaver ELSS',
+            'tax saver': 'HDFC TaxSaver ELSS',
+            'hybrid': 'HDFC Hybrid Equity Fund'
+        }
+        
+        has_fund = any(key in query_lower for key in fund_names.keys())
+        
+        # Try to infer fund from chat history if not in current query
+        inferred_fund = None
+        if not has_fund and chat_history:
+            # Look at last 2 user queries
+            recent_queries = [exchange.get('user', '') for exchange in chat_history[-2:]]
+            for recent_query in reversed(recent_queries):  # Most recent first
+                recent_lower = recent_query.lower()
+                for fund_key, fund_full_name in fund_names.items():
+                    if fund_key in recent_lower:
+                        inferred_fund = fund_full_name
+                        # Add fund to query
+                        query = f"{fund_full_name} {query}"
+                        break
+                if inferred_fund:
+                    break
+        
         # Build context from chat history
         history_context = ""
         if chat_history:
-            recent_history = chat_history[-3:]  # Last 3 exchanges
+            recent_history = chat_history[-2:]  # Last 2 exchanges
             history_context = "\n\nPrevious conversation:\n"
             for exchange in recent_history:
                 history_context += f"User: {exchange.get('user', '')}\n"
-                history_context += f"Assistant: {exchange.get('assistant', '')}\n"
+                # Only include first 100 chars of assistant response to save tokens
+                assistant_response = exchange.get('assistant', '')[:100]
+                history_context += f"Assistant: {assistant_response}...\n"
         
         prompt = f"""Given the chat history and current question, generate a clear, factual query optimized for retrieving information about mutual funds. 
 
 CRITICAL: Preserve the EXACT fund name mentioned (Large Cap, Flexi Cap, ELSS, Hybrid). Do not change or substitute fund names.
 
-Focus on key terms like fund name and metric names (expense ratio, exit load, etc.). Return only the refined query, nothing else.
+Focus on key terms like fund name and metric names (expense ratio, exit load, lock-in, etc.). Return only the refined query, nothing else.
 
 {history_context}
 
@@ -518,22 +557,11 @@ Current question: {query}
 Refined query (must include the exact fund name if mentioned):"""
         
         try:
-            system_prompt = "You are a query refinement assistant. ALWAYS preserve exact fund names from the original question. Return only the refined query, no explanations."
+            system_prompt = "You are a query refinement assistant. ALWAYS preserve exact fund names from the original question or chat history. Return only the refined query, no explanations."
             refined = self._call_llm(prompt, max_tokens=100, temperature=0.05, system_prompt=system_prompt)
             
             # Safety check: ensure fund name is preserved
-            query_lower = query.lower()
             refined_lower = refined.lower() if refined else ""
-            
-            fund_names = {
-                'large cap': 'HDFC Large Cap Fund',
-                'flexi cap': 'HDFC Flexi Cap Fund',
-                'flexicap': 'HDFC Flexi Cap Fund',
-                'elss': 'HDFC TaxSaver ELSS',
-                'taxsaver': 'HDFC TaxSaver ELSS',
-                'tax saver': 'HDFC TaxSaver ELSS',
-                'hybrid': 'HDFC Hybrid Equity Fund'
-            }
             
             # Check if fund name in original but missing in refined
             for key, full_name in fund_names.items():
@@ -653,8 +681,29 @@ Answer:"""
         return formatted
     
     def needs_clarification(self, query: str, chat_history: List[Dict[str, str]]) -> Tuple[bool, Optional[str]]:
-        """Check if query needs clarification (e.g., which fund?)"""
-        query_lower = query.lower()
+        """Check if query needs clarification (e.g., which fund?)
+        
+        Also checks chat history to infer fund context if user asked about a fund recently.
+        """
+        query_lower = query.lower().strip()
+        
+        # Check if query mentions a specific fund
+        fund_mentions = ['large cap', 'flexi cap', 'flexicap', 'elss', 'taxsaver', 'tax saver', 'hybrid']
+        has_fund_mention = any(fund in query_lower for fund in fund_mentions)
+        
+        # Try to infer fund from recent chat history (last 2 exchanges)
+        inferred_fund = None
+        if not has_fund_mention and chat_history:
+            # Look at last 2 user queries
+            recent_queries = [exchange.get('user', '') for exchange in chat_history[-2:]]
+            for recent_query in reversed(recent_queries):  # Most recent first
+                recent_lower = recent_query.lower()
+                for fund_key in fund_mentions:
+                    if fund_key in recent_lower:
+                        inferred_fund = fund_key
+                        break
+                if inferred_fund:
+                    break
         
         # List of ambiguous queries that need fund specification
         ambiguous_patterns = [
@@ -664,6 +713,8 @@ Answer:"""
              "Which fund's expense ratio would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\b(exit load|redemption)\b', 
              "Which fund's exit load would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+            (r'\b(lock.?in|lock.in period)\b', 
+             "Are you asking about:\n\n• **ELSS lock-in period** (3 years mandatory)\n• **Exit load period** for other funds (usually 1 year)\n\nPlease specify which fund or if you meant ELSS lock-in."),
             (r'\b(benchmark|index)\b', 
              "Which fund's benchmark would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\bfund manager\b', 
@@ -672,12 +723,8 @@ Answer:"""
              "Which fund's AUM would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
         ]
         
-        # Check if query mentions a specific fund
-        fund_mentions = ['large cap', 'flexi cap', 'flexicap', 'elss', 'taxsaver', 'tax saver', 'hybrid']
-        has_fund_mention = any(fund in query_lower for fund in fund_mentions)
-        
-        # If no fund mentioned and matches ambiguous pattern, ask for clarification
-        if not has_fund_mention:
+        # If no fund mentioned and no inferred fund, check if query is ambiguous
+        if not has_fund_mention and not inferred_fund:
             for pattern, clarification in ambiguous_patterns:
                 if re.search(pattern, query_lower):
                     return True, clarification
