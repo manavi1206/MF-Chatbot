@@ -78,8 +78,8 @@ st.markdown("""
     
     /* Chat messages - User messages (darker shade) */
     .stChatMessage[data-testid="user-message"] {
-        background-color: var(--bg-user);
-        border: 0.5px solid var(--border-color);
+        background-color: var(--bg-user) !important;
+        border: 0.5px solid var(--border-color) !important;
         border-radius: 10px;
         padding: 0.875rem 1rem;
         margin-bottom: 0.5rem;
@@ -88,8 +88,8 @@ st.markdown("""
     
     /* Chat messages - Assistant messages */
     .stChatMessage[data-testid="assistant-message"] {
-        background-color: var(--bg-assistant);
-        border: 0.5px solid var(--border-color);
+        background-color: var(--bg-assistant) !important;
+        border: 0.5px solid var(--border-color) !important;
         border-radius: 10px;
         padding: 0.875rem 1rem;
         margin-bottom: 0.75rem;
@@ -98,12 +98,31 @@ st.markdown("""
     
     /* All chat messages fallback */
     .stChatMessage {
-        background-color: var(--bg-assistant);
-        border: 0.5px solid var(--border-color);
+        background-color: var(--bg-assistant) !important;
+        border: 0.5px solid var(--border-color) !important;
         border-radius: 10px;
         padding: 0.875rem 1rem;
         margin-bottom: 0.5rem;
         box-shadow: 0 1px 2px var(--shadow);
+    }
+    
+    /* Dark mode overrides for Streamlit's default styles */
+    @media (prefers-color-scheme: dark) {
+        /* Force dark backgrounds on chat messages */
+        .stChatMessage[data-testid="user-message"],
+        .stChatMessage[data-testid="user-message"] > div {
+            background-color: #262730 !important;
+        }
+        
+        .stChatMessage[data-testid="assistant-message"],
+        .stChatMessage[data-testid="assistant-message"] > div {
+            background-color: #1E1E1E !important;
+        }
+        
+        .stChatMessage {
+            background-color: #1E1E1E !important;
+            border-color: #3D3D3D !important;
+        }
     }
     
     /* Reduce spacing between consecutive messages */
