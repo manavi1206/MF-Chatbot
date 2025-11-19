@@ -37,9 +37,20 @@ if 'assistant' not in st.session_state:
                 st.warning("⚠️ Production environment detected. Consider using a cloud LLM (OpenAI/Anthropic) for better reliability.")
         except ImportError:
             # Fallback to environment variables
-            model_type = os.getenv('LLM_MODEL_TYPE', 'ollama')
-            model_name = os.getenv('LLM_MODEL_NAME', 'llama3.1:8b')
-            api_key = os.getenv('GEMINI_API_KEY') if model_type == 'gemini' else os.getenv('OPENAI_API_KEY') if model_type == 'openai' else os.getenv('ANTHROPIC_API_KEY') if model_type == 'anthropic' else None
+            # Default to Gemini for production (Streamlit Cloud)
+            model_type = os.getenv('LLM_MODEL_TYPE', 'gemini')
+            if model_type == 'gemini':
+                model_name = os.getenv('LLM_MODEL_NAME', 'gemini-2.0-flash')
+                api_key = os.getenv('GEMINI_API_KEY')
+            elif model_type == 'openai':
+                model_name = os.getenv('LLM_MODEL_NAME', 'gpt-3.5-turbo')
+                api_key = os.getenv('OPENAI_API_KEY')
+            elif model_type == 'anthropic':
+                model_name = os.getenv('LLM_MODEL_NAME', 'claude-3-5-sonnet-20241022')
+                api_key = os.getenv('ANTHROPIC_API_KEY')
+            else:  # ollama or other
+                model_name = os.getenv('LLM_MODEL_NAME', 'llama3.1:8b')
+                api_key = None
         
         st.session_state.assistant = FAQAssistant(
             model_type=model_type,
@@ -61,14 +72,34 @@ st.info("⚠️ **Facts-only. No investment advice.** This assistant provides fa
 
 # Check if assistant is initialized
 if not st.session_state.rag_initialized:
-    st.error(f"❌ Error initializing assistant: {st.session_state.get('error', 'Unknown error')}")
-    st.info("""
-    **Setup Instructions:**
-    1. Set your Gemini API key: `export GEMINI_API_KEY=your_key_here`
-    2. Or create a `.env` file with: `GEMINI_API_KEY=your_key_here`
-    3. Make sure `cleaned_knowledge_base.json` exists
-    4. Run `python rag_system.py` first to create the vector store
-    """)
+    error_msg = st.session_state.get('error', 'Unknown error')
+    st.error(f"❌ Error initializing assistant: {error_msg}")
+    
+    # Check for common issues
+    if 'GEMINI_API_KEY' in str(error_msg) or 'API key' in str(error_msg):
+        st.info("""
+        **Missing API Key:**
+        1. In Streamlit Cloud, go to Settings → Secrets
+        2. Add your Gemini API key:
+           - `GEMINI_API_KEY=your_key_here`
+        3. Also set:
+           - `LLM_MODEL_TYPE=gemini`
+           - `LLM_MODEL_NAME=gemini-2.0-flash`
+        4. Redeploy the app
+        """)
+    elif 'vector store' in str(error_msg).lower() or 'chroma' in str(error_msg).lower():
+        st.info("""
+        **Vector Store Issue:**
+        The vector store will be created automatically on first use.
+        If this error persists, the knowledge base file may be missing.
+        """)
+    else:
+        st.info("""
+        **Setup Instructions:**
+        1. Set your Gemini API key in Streamlit Cloud Secrets
+        2. Make sure `cleaned_knowledge_base.json` exists in the repository
+        3. The vector store will be created automatically
+        """)
     st.stop()
 
 # Welcome section (only show if no chat history)

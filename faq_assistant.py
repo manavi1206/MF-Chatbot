@@ -445,9 +445,20 @@ Answer:"""
         # Ensure vector store is initialized
         if not self.rag_system.collection:
             try:
+                # Try to create vector store automatically
                 self.rag_system.create_vector_store(force_recreate=False)
+            except FileNotFoundError as e:
+                if 'cleaned_knowledge_base.json' in str(e):
+                    return "Error: Knowledge base file not found. Please ensure cleaned_knowledge_base.json exists in the repository.", None
+                return f"Error: Required file not found. {str(e)}", None
             except Exception as e:
-                return f"Error: Vector store not initialized. Please run 'python rag_system.py' first. Error: {str(e)}", None
+                # Log the error but try to continue
+                import traceback
+                print(f"Warning: Vector store initialization error: {e}")
+                print(traceback.format_exc())
+                # Try to continue anyway - might work if collection exists
+                if not self.rag_system.collection:
+                    return f"Error: Could not initialize vector store. {str(e)}", None
         
         # Stage 1: Refine query
         refined_query = self.refine_query(query, chat_history)
