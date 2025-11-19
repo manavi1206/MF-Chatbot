@@ -288,18 +288,26 @@ class RAGSystem:
                 }
                 all_chunks.append(chunk)
         
-        # If we have a fund filter, prioritize chunks from that fund
+        # If we have a fund filter, strongly prioritize chunks from that fund
         if fund_filter and all_chunks:
-            # Separate chunks by fund match
-            matching_chunks = [c for c in all_chunks if c['metadata'].get('fund_tag') == fund_filter]
-            other_chunks = [c for c in all_chunks if c['metadata'].get('fund_tag') != fund_filter]
+            # Separate chunks by type
+            fund_specific = [c for c in all_chunks if c['metadata'].get('fund_tag') == fund_filter]
+            regulatory = [c for c in all_chunks if c['metadata'].get('fund_tag') == 'REGULATORY']
+            help_docs = [c for c in all_chunks if c['metadata'].get('fund_tag') == 'HELP']
+            other = [c for c in all_chunks if c['metadata'].get('fund_tag') not in [fund_filter, 'REGULATORY', 'HELP']]
             
-            # Prioritize matching chunks, then others
-            chunks = (matching_chunks + other_chunks)[:k]
+            # Prioritize: fund-specific first, then help docs, then other funds, then regulatory
+            # Regulatory docs should be LAST because they contain generic definitions
+            chunks = (fund_specific + help_docs + other + regulatory)[:k]
             
-            print(f"Query fund filter: {fund_filter}, Found {len(matching_chunks)} matching chunks")
+            print(f"Query fund filter: {fund_filter}, Found {len(fund_specific)} fund-specific, {len(regulatory)} regulatory chunks")
         else:
-            chunks = all_chunks[:k]
+            # No specific fund - still prefer fund docs over regulatory
+            fund_chunks = [c for c in all_chunks if c['metadata'].get('fund_tag') not in ['REGULATORY', 'HELP']]
+            regulatory = [c for c in all_chunks if c['metadata'].get('fund_tag') == 'REGULATORY']
+            help_docs = [c for c in all_chunks if c['metadata'].get('fund_tag') == 'HELP']
+            
+            chunks = (fund_chunks + help_docs + regulatory)[:k]
         
         return chunks
     

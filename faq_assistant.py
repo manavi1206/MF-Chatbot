@@ -633,17 +633,23 @@ Answer in one sentence:"""
 
 Question: {refined_query}
 
-Important formatting rules:
-1. Answer ONLY the specific question asked - don't add extra information
-2. For simple single-value questions (like "What is the expense ratio?"), give a direct sentence answer
-3. For questions with multiple points, use bullet points (•) with each point on a new line
-4. For step-by-step instructions, use numbered points (1., 2., 3.)
-5. Use line breaks between different concepts for better readability
-6. For minimum SIP questions, look for "Minimum SIP" amount, not "additional purchase"
-7. Be precise - distinguish between initial minimum and additional purchase amounts
+CRITICAL Instructions:
+1. If the question asks for a SPECIFIC VALUE (like "what is the exit load of HDFC TaxSaver ELSS?"), you MUST provide the specific value, NOT a general definition
+2. If you find a general definition but NOT the specific value requested, say "The document does not contain the specific [metric] for [fund name]"
+3. Do NOT give generic definitions when asked for specific fund values
+4. Answer ONLY the specific question asked - don't add extra information
+
+Formatting rules:
+1. For simple single-value questions (like "What is the expense ratio?"), give a direct sentence answer with the value
+2. For questions with multiple points, use bullet points (•) with each point on a new line
+3. For step-by-step instructions, use numbered points (1., 2., 3.)
+4. Use line breaks between different concepts for better readability
+5. For minimum SIP questions, look for "Minimum SIP" amount, not "additional purchase"
+6. Be precise - distinguish between initial minimum and additional purchase amounts
 
 Format examples:
 - Single answer: "The expense ratio of HDFC Large Cap Fund is 0.96%."
+- No specific info: "The document does not contain the specific exit load for HDFC TaxSaver ELSS."
 - Multiple points: "The HDFC Large Cap Fund has the following features:\n• Expense ratio: 0.96%\n• Exit load: 1% if redeemed within 1 year\n• Minimum SIP: Rs. 500"
 - Steps: "To download your CAS statement:\n1. Visit the CAMS or Karvy website\n2. Enter your PAN and email\n3. Click on 'Submit'"
 
