@@ -310,6 +310,9 @@ Examples:
 - "expense ratio of HDFC fund" → yes
 - "ELSS lock-in period" → yes
 - "minimum SIP amount" → yes
+- "how to download CAS statement" → yes (CAS = Consolidated Account Statement for mutual funds)
+- "how to download statement" → yes (mutual fund statement)
+- "how to invest in mutual funds" → yes
 - "do you cook" → no
 - "will you date me" → no
 - "what's the weather" → no
@@ -540,21 +543,24 @@ You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link}
         # If user just said a fund name, check if previous query had a question
         # This handles: User: "minimum sip" → Bot: "which fund?" → User: "large cap"
         if is_just_fund_name and chat_history:
-            # Look at last user query (before current)
+            # Look at last exchange
             if len(chat_history) > 0:
                 last_user_query = chat_history[-1].get('user', '').lower()
                 last_assistant = chat_history[-1].get('assistant', '').lower()
                 
+                print(f"DEBUG: User said just fund name: '{query}'")
+                print(f"DEBUG: Last user query: '{last_user_query}'")
+                print(f"DEBUG: Last assistant response: '{last_assistant[:100]}...'")
+                
                 # Check if assistant asked for clarification
-                if 'which fund' in last_assistant or 'we cover' in last_assistant:
-                    # User is answering a clarification - combine with previous question
-                    if len(chat_history) > 1:
-                        original_query = chat_history[-2].get('user', '')
-                        # Combine: original question + current fund name
-                        query = f"{query} {original_query}"
-                    else:
-                        # Just previous query
-                        query = f"{query} {last_user_query}"
+                if 'which fund' in last_assistant:
+                    # User is answering a clarification - use the previous user's question
+                    print(f"DEBUG: Detected clarification response")
+                    
+                    # The current query is the fund name, last_user_query is the actual question
+                    # Combine: fund name + actual question
+                    query = f"{query} {last_user_query}"
+                    print(f"DEBUG: Combined query: '{query}'")
         
         # Build context from chat history
         history_context = ""
