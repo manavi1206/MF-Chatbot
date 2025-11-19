@@ -324,7 +324,7 @@ streamlit run app.py
 ### 1. Quick Health Check ⭐ Recommended
 
 ```bash
-python quick_health_check.py
+python tests/quick_health_check.py
 ```
 
 Tests 10 essential functionalities:
@@ -342,7 +342,7 @@ Tests 10 essential functionalities:
 ### 2. Full Test Suite
 
 ```bash
-python test_queries.py
+python tests/test_queries.py
 ```
 
 Runs 20+ test queries across all categories.
@@ -500,13 +500,34 @@ MF-Chatbot/
 ├── rag_system.py                  # Vector store & retrieval
 ├── citation_handler.py            # Citation extraction
 ├── config.py                      # Configuration
-├── cleaned_knowledge_base.json    # Knowledge base
+├── cleaned_knowledge_base.json    # Active knowledge base
 ├── sources.csv                    # Source metadata
-├── test_queries.py               # Full test suite
-├── quick_health_check.py         # Quick health check
-├── requirements.txt              # Dependencies
-├── chroma_db/                    # Vector store (created on first run)
-└── README.md                     # This file
+├── requirements.txt               # Dependencies
+├── README.md                      # Documentation
+├──
+├── scripts/                       # Data processing & setup scripts
+│   ├── fetch_fund_data.py        # Fetch fund documents
+│   ├── fetch_regulatory_sources.py # Fetch regulatory docs
+│   ├── clean_and_structure_data.py # Clean data
+│   ├── consolidate_scheme_data.py  # Consolidate schemes
+│   ├── update_knowledge_base.py    # Update KB (for cron)
+│   └── setup_cron.sh              # Cron setup script
+├──
+├── tests/                         # Test suites
+│   ├── test_queries.py           # Full test suite
+│   ├── quick_health_check.py     # Quick health check
+│   ├── test_patterns.py          # Pattern testing
+│   └── test_out_of_context.py    # Out-of-context testing
+├──
+├── data/                          # Raw & intermediate data
+│   ├── fund_data_*.txt           # Raw fund documents
+│   ├── comprehensive_fund_dataset.* # Processed datasets
+│   ├── regulatory_knowledge_base.json # Regulatory data
+│   └── unified_knowledge_base.json # Unified KB
+├──
+├── logs/                          # Application logs
+├── chroma_db/                     # Vector store (auto-created)
+└── mf-env/                        # Virtual environment (local)
 ```
 
 ---

@@ -5,6 +5,10 @@ Test out-of-context pattern matching (no LLM needed)
 
 import re
 
+# Add parent directory to path to import modules
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
 def test_patterns():
     """Test regex patterns for out-of-context detection"""
     print("Testing out-of-context patterns...\n")

@@ -13,7 +13,10 @@ from chromadb.config import Settings
 import re
 
 class RAGSystem:
-    def __init__(self, knowledge_base_path='cleaned_knowledge_base.json', vector_store_path='./chroma_db'):
+    def __init__(self, knowledge_base_path='data/cleaned_knowledge_base.json', vector_store_path='./chroma_db'):
+        # Support both old and new paths for backward compatibility
+        if not os.path.exists(knowledge_base_path) and os.path.exists('cleaned_knowledge_base.json'):
+            knowledge_base_path = 'cleaned_knowledge_base.json'
         self.knowledge_base_path = knowledge_base_path
         self.vector_store_path = vector_store_path
         self.embedding_model = None

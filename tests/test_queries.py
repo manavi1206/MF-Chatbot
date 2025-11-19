@@ -4,6 +4,10 @@ Test 20 queries across different categories
 Tests: fund-related, knowledge, help, miscellaneous, advice, greetings
 """
 
+
+# Add parent directory to path to import modules
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import os
 import sys
 from dotenv import load_dotenv

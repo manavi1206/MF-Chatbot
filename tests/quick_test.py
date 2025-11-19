@@ -4,6 +4,10 @@ Quick test - 5 key queries to verify everything works
 """
 
 import os
+
+# Add parent directory to path to import modules
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import sys
 from dotenv import load_dotenv
 from faq_assistant import FAQAssistant

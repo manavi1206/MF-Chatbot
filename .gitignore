@@ -28,6 +28,10 @@ test_results.txt
 .env.*
 !.env.example
 
+# Test results
+tests/*.txt
+tests/*.log
+
 # OS files
 .DS_Store
 Thumbs.db

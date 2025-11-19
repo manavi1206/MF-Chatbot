@@ -5,6 +5,10 @@ Quick test for out-of-context detection
 
 from faq_assistant import FAQAssistant
 
+# Add parent directory to path to import modules
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
 def test_out_of_context():
     """Test out-of-context query detection"""
     print("Testing out-of-context detection...\n")
