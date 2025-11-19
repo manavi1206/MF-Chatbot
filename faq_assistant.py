@@ -263,7 +263,15 @@ class FAQAssistant:
             r'(funds|schemes).*(you|we) (have|cover|support)',
             r'coverage',
             r'what.*schemes.*do.*have',
-            r'which.*schemes.*available'
+            r'which.*schemes.*available',
+            r'what (all )?can i ask (you|about)',
+            r'what (all )?(questions|topics|things) can i ask',
+            r'what can you (help|answer|tell)',
+            r'what (do|can) you (know|answer|help)',
+            r'what are your capabilities',
+            r'what (topics|questions) (do you|can you) (answer|handle|cover)',
+            r'tell me what you can do',
+            r'what information (do you|can you) provide'
         ]
         
         for pattern in coverage_patterns:
@@ -361,7 +369,9 @@ What would you like to know about HDFC Mutual Funds?"""
     
     def handle_coverage_query(self) -> str:
         """Generate response about what funds we cover"""
-        return """I provide information about **4 HDFC Mutual Fund schemes**:
+        return """I can help you with **factual questions** about **4 HDFC Mutual Fund schemes**:
+
+**Funds I Cover:**
 
 **1. HDFC Large Cap Fund**
    • Category: Large Cap Equity
@@ -379,12 +389,17 @@ What would you like to know about HDFC Mutual Funds?"""
    • Category: Aggressive Hybrid
    • Investment Objective: Balanced exposure to equity and debt
 
-You can ask me factual questions about any of these funds, such as:
-• Expense ratios and fees
-• Minimum SIP amounts
-• Exit loads and lock-in periods
-• Benchmarks and fund managers
-• How to invest or download statements"""
+**Questions You Can Ask:**
+• What is the expense ratio of [fund name]?
+• What is the minimum SIP amount for [fund name]?
+• What is the exit load of [fund name]?
+• What is the ELSS lock-in period?
+• What is the benchmark of [fund name]?
+• Who is the fund manager of [fund name]?
+• How to download CAS statement?
+• How to invest in mutual funds?
+
+Try asking about any of these topics for the funds listed above!"""
     
     def handle_out_of_context(self) -> str:
         """Generate out-of-context refusal response"""
