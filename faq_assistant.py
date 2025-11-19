@@ -470,8 +470,41 @@ Answer:"""
         formatted = f"{answer}\n\n**Source:** {citation}\n\n*Last updated from sources: {last_updated}*"
         return formatted
     
+    def needs_clarification(self, query: str, chat_history: List[Dict[str, str]]) -> Tuple[bool, Optional[str]]:
+        """Check if query needs clarification (e.g., which fund?)"""
+        query_lower = query.lower()
+        
+        # List of ambiguous queries that need fund specification
+        ambiguous_patterns = [
+            (r'\b(what|tell|show).*?(minimum|min).*?(sip|investment|amount)', 
+             "Which fund would you like to know about? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+            (r'\b(what|tell).*?(expense ratio|ter|fees)', 
+             "Which fund's expense ratio would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+            (r'\b(what|tell).*?(exit load|redemption)', 
+             "Which fund's exit load would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+            (r'\b(what|tell).*?(benchmark|index)', 
+             "Which fund's benchmark would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+        ]
+        
+        # Check if query mentions a specific fund
+        fund_mentions = ['large cap', 'flexi cap', 'flexicap', 'elss', 'taxsaver', 'tax saver', 'hybrid']
+        has_fund_mention = any(fund in query_lower for fund in fund_mentions)
+        
+        # If no fund mentioned and matches ambiguous pattern, ask for clarification
+        if not has_fund_mention:
+            for pattern, clarification in ambiguous_patterns:
+                if re.search(pattern, query_lower):
+                    return True, clarification
+        
+        return False, None
+    
     def handle_factual_query(self, query: str, chat_history: List[Dict[str, str]]) -> Tuple[str, Optional[str]]:
         """Handle factual query using two-stage RAG"""
+        # Check if query needs clarification
+        needs_clarif, clarification_msg = self.needs_clarification(query, chat_history)
+        if needs_clarif:
+            return clarification_msg, None
+        
         # Ensure vector store is initialized
         if not self.rag_system.collection:
             try:
