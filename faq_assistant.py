@@ -325,14 +325,22 @@ class FAQAssistant:
     
     def handle_greeting(self) -> str:
         """Generate greeting response"""
-        return """Hello! I'm a facts-only mutual fund assistant. I can help you with factual questions about HDFC Mutual Funds, such as expense ratios, exit loads, lock-in periods, riskometers, benchmarks, and more. 
+        return """Hello! 👋 I'm a facts-only mutual fund assistant.
+
+I can help you with factual questions about **HDFC Mutual Funds**, such as:
+• Expense ratios and fees
+• Exit loads and lock-in periods
+• Riskometers and benchmarks
+• How to download statements (CAS, tax reports)
+• Fund details and investment objectives
 
 What would you like to know about HDFC Mutual Funds?"""
     
     def handle_out_of_context(self) -> str:
         """Generate out-of-context refusal response"""
-        return """I'm designed to answer factual questions about mutual funds only. I can help you with information about HDFC Mutual Funds, including:
+        return """I'm designed to answer factual questions about **mutual funds only**.
 
+I can help you with information about **HDFC Mutual Funds**, including:
 • Expense ratios and fees
 • Exit loads and lock-in periods
 • Riskometers and benchmarks
@@ -344,7 +352,9 @@ Please ask me a question about mutual funds."""
     def handle_advice_query(self) -> str:
         """Generate advice-seeking refusal response"""
         amfi_link = "https://www.amfiindia.com/investor/knowledge-center-info?zoneName=IntroductionMutualFunds"
-        return f"""I provide factual information only and cannot give investment advice. For guidance on investment decisions, please consult a registered financial advisor. 
+        return f"""I provide **factual information only** and cannot give investment advice.
+
+For guidance on investment decisions, please consult a **registered financial advisor**.
 
 You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link})."""
     
@@ -451,26 +461,33 @@ Answer in one sentence:"""
         # Join all chunks with clear separators
         context = "\n\n---\n\n".join(context_parts)
         
-        system_prompt = """You are a helpful assistant that answers factual questions about mutual funds. Provide natural, conversational answers that are precise and friendly. Answer ONLY what is asked - don't add extra information. Be concise (1-2 sentences). Only use information from the provided context."""
+        system_prompt = """You are a helpful assistant that answers factual questions about mutual funds. Provide natural, well-formatted answers that are precise and friendly. Answer ONLY what is asked. Use proper formatting with bullet points and line breaks for better readability. Only use information from the provided context."""
         
-        user_prompt = f"""Use the following information to answer the question. Provide a complete, natural sentence as your answer.
+        user_prompt = f"""Use the following information to answer the question. Provide a well-formatted answer with proper structure.
 
 {context}
 
 Question: {refined_query}
 
-Important: 
-1. Answer ONLY the specific question asked
-2. Frame your answer as a complete sentence (e.g., "The expense ratio of HDFC Large Cap Fund is 0.96%")
-3. For minimum SIP questions, look for "Minimum SIP" amount, not "additional purchase" or "subsequent investment"
-4. Do not include additional metrics unless specifically requested
-5. Be precise - distinguish between initial minimum and additional purchase amounts
+Important formatting rules:
+1. Answer ONLY the specific question asked - don't add extra information
+2. For simple single-value questions (like "What is the expense ratio?"), give a direct sentence answer
+3. For questions with multiple points, use bullet points (•) with each point on a new line
+4. For step-by-step instructions, use numbered points (1., 2., 3.)
+5. Use line breaks between different concepts for better readability
+6. For minimum SIP questions, look for "Minimum SIP" amount, not "additional purchase"
+7. Be precise - distinguish between initial minimum and additional purchase amounts
+
+Format examples:
+- Single answer: "The expense ratio of HDFC Large Cap Fund is 0.96%."
+- Multiple points: "The HDFC Large Cap Fund has the following features:\n• Expense ratio: 0.96%\n• Exit load: 1% if redeemed within 1 year\n• Minimum SIP: Rs. 500"
+- Steps: "To download your CAS statement:\n1. Visit the CAMS or Karvy website\n2. Enter your PAN and email\n3. Click on 'Submit'"
 
 Answer:"""
         
         try:
-            # Reduce max_tokens for more concise answers
-            answer = self._call_llm(user_prompt, max_tokens=100, temperature=0.2, system_prompt=system_prompt)
+            # Increase max_tokens for better formatted answers
+            answer = self._call_llm(user_prompt, max_tokens=250, temperature=0.2, system_prompt=system_prompt)
             return answer if answer else self._retry_with_simpler_prompt(refined_query, chunks)
         except Exception as e:
             error_msg = str(e)
@@ -506,17 +523,17 @@ Answer:"""
         # List of ambiguous queries that need fund specification
         ambiguous_patterns = [
             (r'\b(minimum|min).*(sip|investment|amount)', 
-             "Which fund would you like to know about? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+             "Which fund would you like to know about?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\b(expense ratio|ter|fees)\b', 
-             "Which fund's expense ratio would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+             "Which fund's expense ratio would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\b(exit load|redemption)\b', 
-             "Which fund's exit load would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+             "Which fund's exit load would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\b(benchmark|index)\b', 
-             "Which fund's benchmark would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+             "Which fund's benchmark would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\bfund manager\b', 
-             "Which fund's fund manager would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+             "Which fund's fund manager would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\baum\b', 
-             "Which fund's AUM would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+             "Which fund's AUM would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
         ]
         
         # Check if query mentions a specific fund
