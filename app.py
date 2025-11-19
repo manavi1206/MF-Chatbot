@@ -16,8 +16,74 @@ load_dotenv()
 st.set_page_config(
     page_title="Facts-Only MF Assistant",
     page_icon="📊",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+
+# Custom CSS for Groww-inspired color scheme
+st.markdown("""
+<style>
+    /* Groww color scheme */
+    :root {
+        --groww-green: #00D09C;
+        --groww-dark: #1E1E1E;
+        --groww-text: #44475B;
+        --groww-light-bg: #F5F7FA;
+    }
+    
+    /* Main content area */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Info boxes */
+    .stAlert {
+        background-color: #E8F7F4;
+        border-left: 4px solid var(--groww-green);
+        border-radius: 4px;
+    }
+    
+    /* Buttons */
+    .stButton>button {
+        background-color: var(--groww-green);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+    }
+    
+    .stButton>button:hover {
+        background-color: #00B88A;
+        border: none;
+    }
+    
+    /* Chat messages */
+    .stChatMessage {
+        background-color: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Remove excess spacing */
+    hr {
+        margin: 0.5rem 0;
+        border: none;
+        border-top: 1px solid #E8E8E8;
+    }
+    
+    /* Source citation styling */
+    .source-citation {
+        font-size: 0.9rem;
+        color: var(--groww-text);
+        padding: 0.75rem;
+        background-color: #F8F9FA;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # Initialize session state
 if 'chat_history' not in st.session_state:
@@ -63,12 +129,16 @@ if 'assistant' not in st.session_state:
         st.session_state.rag_initialized = False
         st.session_state.error = str(e)
 
-# Header
-st.title("📊 Facts-Only MF Assistant")
-st.caption("No Investment Advice • Verified Sources Only")
+# Header with custom styling
+st.markdown("""
+    <div style="margin-bottom: 1.5rem;">
+        <h1 style="color: #1E1E1E; margin-bottom: 0.25rem;">📊 Facts-Only MF Assistant</h1>
+        <p style="color: #44475B; font-size: 0.95rem; margin-top: 0;">No Investment Advice • Verified Sources Only</p>
+    </div>
+""", unsafe_allow_html=True)
 
 # Disclaimer banner
-st.info("⚠️ **Facts-only. No investment advice.** This assistant provides factual information about HDFC Mutual Funds from official sources (AMC, SEBI, AMFI).")
+st.info("💡 **Facts-only. No investment advice.** This assistant provides factual information about HDFC Mutual Funds from official sources (AMC, SEBI, AMFI).")
 
 # Check if assistant is initialized
 if not st.session_state.rag_initialized:
@@ -132,8 +202,7 @@ if not st.session_state.chat_history:
             st.session_state.example_query = "How to download CAS statement?"
             st.rerun()
 
-# Chat interface
-st.markdown("---")
+# Chat interface (removed divider for cleaner look)
 
 # Display chat history
 for i, exchange in enumerate(st.session_state.chat_history):
@@ -190,11 +259,11 @@ if query:
     
     st.rerun()
 
-# Footer
-st.markdown("---")
+# Footer (minimal styling)
+st.markdown("<br>", unsafe_allow_html=True)
 rag_system = RAGSystem()
 last_updated = rag_system.get_last_updated_date()
-st.caption(f"📅 Last updated from sources: {last_updated}")
+st.caption(f"📅 Last updated: {last_updated}")
 
 # Sidebar with info
 with st.sidebar:
