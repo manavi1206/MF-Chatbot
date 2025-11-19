@@ -501,7 +501,7 @@ You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link}
     def refine_query(self, query: str, chat_history: List[Dict[str, str]]) -> str:
         """Stage 1: Refine query using LLM with chat history
         
-        Infers fund context from recent chat history if not mentioned in current query.
+        Infers fund context AND original question from recent chat history.
         """
         query_lower = query.lower()
         
@@ -518,6 +518,9 @@ You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link}
         
         has_fund = any(key in query_lower for key in fund_names.keys())
         
+        # Check if user is just providing a fund name (short response to clarification)
+        is_just_fund_name = has_fund and len(query.split()) <= 4
+        
         # Try to infer fund from chat history if not in current query
         inferred_fund = None
         if not has_fund and chat_history:
@@ -533,6 +536,25 @@ You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link}
                         break
                 if inferred_fund:
                     break
+        
+        # If user just said a fund name, check if previous query had a question
+        # This handles: User: "minimum sip" → Bot: "which fund?" → User: "large cap"
+        if is_just_fund_name and chat_history:
+            # Look at last user query (before current)
+            if len(chat_history) > 0:
+                last_user_query = chat_history[-1].get('user', '').lower()
+                last_assistant = chat_history[-1].get('assistant', '').lower()
+                
+                # Check if assistant asked for clarification
+                if 'which fund' in last_assistant or 'we cover' in last_assistant:
+                    # User is answering a clarification - combine with previous question
+                    if len(chat_history) > 1:
+                        original_query = chat_history[-2].get('user', '')
+                        # Combine: original question + current fund name
+                        query = f"{query} {original_query}"
+                    else:
+                        # Just previous query
+                        query = f"{query} {last_user_query}"
         
         # Build context from chat history
         history_context = ""
