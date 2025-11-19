@@ -425,15 +425,18 @@ Answer in one sentence:"""
         # Join all chunks with clear separators
         context = "\n\n---\n\n".join(context_parts)
         
-        system_prompt = """You are a helpful assistant that answers factual questions about mutual funds. Answer ONLY what is asked - don't add extra information. Be precise and concise (1-2 sentences). Only use information from the provided context."""
+        system_prompt = """You are a helpful assistant that answers factual questions about mutual funds. Provide natural, conversational answers that are precise and friendly. Answer ONLY what is asked - don't add extra information. Be concise (1-2 sentences). Only use information from the provided context."""
         
-        user_prompt = f"""Use the following information to answer the question. Answer ONLY what is specifically asked, nothing more.
+        user_prompt = f"""Use the following information to answer the question. Provide a complete, natural sentence as your answer.
 
 {context}
 
 Question: {refined_query}
 
-Important: Answer ONLY the specific question asked. Do not include additional metrics or information unless specifically requested.
+Important: 
+1. Answer ONLY the specific question asked
+2. Frame your answer as a complete sentence (e.g., "The expense ratio of HDFC Large Cap Fund is 0.96%")
+3. Do not include additional metrics unless specifically requested
 
 Answer:"""
         
