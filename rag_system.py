@@ -277,15 +277,29 @@ class RAGSystem:
             n_results=n_results
         )
         
-        # Format results
-        chunks = []
+        # Parse results
+        all_chunks = []
         if results['documents'] and len(results['documents'][0]) > 0:
             for i in range(len(results['documents'][0])):
-                chunks.append({
+                chunk = {
                     'text': results['documents'][0][i],
                     'metadata': results['metadatas'][0][i],
                     'distance': results['distances'][0][i] if 'distances' in results else None
-                })
+                }
+                all_chunks.append(chunk)
+        
+        # If we have a fund filter, prioritize chunks from that fund
+        if fund_filter and all_chunks:
+            # Separate chunks by fund match
+            matching_chunks = [c for c in all_chunks if c['metadata'].get('fund_tag') == fund_filter]
+            other_chunks = [c for c in all_chunks if c['metadata'].get('fund_tag') != fund_filter]
+            
+            # Prioritize matching chunks, then others
+            chunks = (matching_chunks + other_chunks)[:k]
+            
+            print(f"Query fund filter: {fund_filter}, Found {len(matching_chunks)} matching chunks")
+        else:
+            chunks = all_chunks[:k]
         
         return chunks
     
