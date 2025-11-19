@@ -436,7 +436,9 @@ Question: {refined_query}
 Important: 
 1. Answer ONLY the specific question asked
 2. Frame your answer as a complete sentence (e.g., "The expense ratio of HDFC Large Cap Fund is 0.96%")
-3. Do not include additional metrics unless specifically requested
+3. For minimum SIP questions, look for "Minimum SIP" amount, not "additional purchase" or "subsequent investment"
+4. Do not include additional metrics unless specifically requested
+5. Be precise - distinguish between initial minimum and additional purchase amounts
 
 Answer:"""
         
@@ -476,14 +478,18 @@ Answer:"""
         
         # List of ambiguous queries that need fund specification
         ambiguous_patterns = [
-            (r'\b(what|tell|show).*?(minimum|min).*?(sip|investment|amount)', 
+            (r'\b(minimum|min).*(sip|investment|amount)', 
              "Which fund would you like to know about? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\b(what|tell).*?(expense ratio|ter|fees)', 
+            (r'\b(expense ratio|ter|fees)\b', 
              "Which fund's expense ratio would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\b(what|tell).*?(exit load|redemption)', 
+            (r'\b(exit load|redemption)\b', 
              "Which fund's exit load would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\b(what|tell).*?(benchmark|index)', 
+            (r'\b(benchmark|index)\b', 
              "Which fund's benchmark would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+            (r'\bfund manager\b', 
+             "Which fund's fund manager would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
+            (r'\baum\b', 
+             "Which fund's AUM would you like to know? We cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
         ]
         
         # Check if query mentions a specific fund
