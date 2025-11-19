@@ -348,7 +348,7 @@ You can learn more about mutual funds at the [AMFI Knowledge Center]({amfi_link}
                 history_context += f"User: {exchange.get('user', '')}\n"
                 history_context += f"Assistant: {exchange.get('assistant', '')}\n"
         
-        prompt = f"""Given the chat history and current question, generate a clear, factual query optimized for retrieving information about mutual funds. Focus on key terms like fund name, metric names (expense ratio, exit load, etc.). Return only the refined query, nothing else.
+        prompt = f"""Given the chat history and current question, generate a clear, factual query optimized for retrieving information about mutual funds. Focus on key terms like fund name, metric names (expense ratio, exit load, etc.). Preserve the SPECIFIC nature of the question - if they ask for ONE metric, keep it focused on that ONE metric. Return only the refined query, nothing else.
 
 {history_context}
 
@@ -357,8 +357,8 @@ Current question: {query}
 Refined query:"""
         
         try:
-            system_prompt = "You are a query refinement assistant. Return only the refined query, no explanations."
-            refined = self._call_llm(prompt, max_tokens=100, temperature=0.2, system_prompt=system_prompt)
+            system_prompt = "You are a query refinement assistant. Preserve the specificity of questions. Return only the refined query, no explanations."
+            refined = self._call_llm(prompt, max_tokens=100, temperature=0.1, system_prompt=system_prompt)
             return refined if refined else query
         except Exception as e:
             error_msg = str(e)
@@ -414,18 +414,21 @@ Answer in one sentence:"""
         # Join all chunks with clear separators
         context = "\n\n---\n\n".join(context_parts)
         
-        system_prompt = """You are a helpful assistant that answers factual questions about mutual funds using provided documents. Provide clear, concise answers in 2-3 sentences. Only use information from the provided context."""
+        system_prompt = """You are a helpful assistant that answers factual questions about mutual funds. Answer ONLY what is asked - don't add extra information. Be precise and concise (1-2 sentences). Only use information from the provided context."""
         
-        user_prompt = f"""Use the following information to answer the question:
+        user_prompt = f"""Use the following information to answer the question. Answer ONLY what is specifically asked, nothing more.
 
 {context}
 
 Question: {refined_query}
 
+Important: Answer ONLY the specific question asked. Do not include additional metrics or information unless specifically requested.
+
 Answer:"""
         
         try:
-            answer = self._call_llm(user_prompt, max_tokens=200, temperature=0.3, system_prompt=system_prompt)
+            # Reduce max_tokens for more concise answers
+            answer = self._call_llm(user_prompt, max_tokens=100, temperature=0.2, system_prompt=system_prompt)
             return answer if answer else self._retry_with_simpler_prompt(refined_query, chunks)
         except Exception as e:
             error_msg = str(e)
