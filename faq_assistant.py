@@ -279,90 +279,84 @@ class FAQAssistant:
                 return True
         return False
     
-    def is_out_of_context(self, query: str) -> bool:
-        """Detect out-of-context queries (non-MF related)"""
+    def is_mutual_fund_related(self, query: str) -> bool:
+        """
+        Use LLM to determine if query is related to mutual funds at all.
+        This is Stage 1 of two-stage classification - most robust approach.
+        
+        Returns True if query is about mutual funds/investing, False otherwise.
+        """
         query_lower = query.lower().strip()
         
-        # Check for meaningless queries first
-        # 1. Only numbers (like "565665")
+        # Fast checks for obvious gibberish (no LLM needed)
         if query_lower.isdigit():
-            return True
+            return False
         
-        # 2. Very short queries (1-2 characters) that aren't greetings
-        # BUT allow MF-related terms like "nav", "aum", "sip"
-        if len(query_lower) <= 2 and not self.is_greeting(query_lower):
-            mf_short_terms = ['mf', 'sip', 'nav', 'aum']
-            if query_lower not in mf_short_terms:
-                return True
+        if len(query_lower) <= 2:
+            mf_short_terms = ['mf', 'nav', 'aum', 'sip']
+            return query_lower in mf_short_terms
         
-        # 3. Only special characters or very short gibberish
         if len(query_lower) <= 3 and not any(c.isalpha() for c in query_lower):
-            return True
+            return False
         
-        # 4. Queries with mostly numbers and few/no words
-        words = re.findall(r'[a-zA-Z]+', query_lower)
-        if len(words) == 0 or (len(query_lower) > 5 and len(''.join(words)) < len(query_lower) * 0.3):
-            return True
-        
-        # MF-related keywords that indicate the query is relevant
-        mf_keywords = [
-            'mutual fund', 'mf', 'fund', 'scheme', 'nav', 'aum',
-            'expense ratio', 'exit load', 'sip', 'elss', 'lock-in',
-            'riskometer', 'benchmark', 'portfolio', 'factsheet',
-            'hdfc', 'amc', 'sebi', 'amfi', 'cas', 'statement',
-            'tax', 'capital gains', 'dividend', 'redemption',
-            'allotment', 'units', 'investment', 'equity', 'debt'
-        ]
-        
-        # Check if query contains MF-related terms
-        has_mf_terms = any(keyword in query_lower for keyword in mf_keywords)
-        
-        # Out-of-context indicators - expanded list
-        out_of_context_patterns = [
-            r'\bpm\b', r'prime minister', r'president', r'minister',
-            r'capital of', r'capital city',
-            r'favorite sport', r'favourite sport',
-            r'tell me a joke', r'joke',
-            r'weather', r'temperature',
-            r'what is your name', r'who are you',
-            r'what time is it', r'what day is it',
-            r'how are you', r'how do you do',
-            r'who is (the )?(pm|president|ceo|founder|director)',
-            r'what is (the )?(population|area|size)',
-            r'when (is|was|will)',
-            r'where (is|was|are)',
-            r'\b(do you|can you|did you)\s+(cook|eat|sleep|dance|sing|play|run|walk)',
-            r'\b(cooking|baking|chef|kitchen|meal|breakfast|lunch|dinner)\b',
-            r'(cricket|football|sports|movie|film|music)',
-            r'(recipe|food|restaurant)',
-            r'(technology|computer|phone|laptop)(?! fund)',
-            r'(game|gaming|video)',
-            r'(travel|tourism|hotel|flight)'
-        ]
-        
-        # If it has out-of-context patterns and no MF terms, it's out of context
-        has_out_of_context = any(re.search(pattern, query_lower) for pattern in out_of_context_patterns)
-        
-        if has_out_of_context and not has_mf_terms:
-            return True
-        
-        # If it's a greeting, it's not out-of-context (handled separately)
+        # Use LLM for relevance check
+        relevance_prompt = f"""Is this query related to mutual funds, investments, or financial products?
+
+Query: "{query}"
+
+Answer ONLY "yes" or "no".
+
+Examples:
+- "expense ratio of HDFC fund" → yes
+- "ELSS lock-in period" → yes
+- "minimum SIP amount" → yes
+- "do you cook" → no
+- "will you date me" → no
+- "what's the weather" → no
+- "who is PM" → no
+- "tell me a joke" → no
+
+Answer:"""
+
+        try:
+            result = self._call_llm(
+                relevance_prompt, 
+                max_tokens=5, 
+                temperature=0.0,
+                system_prompt="You are a relevance checker for a mutual fund chatbot. Answer only 'yes' or 'no'."
+            )
+            
+            answer = result.strip().lower()
+            is_relevant = 'yes' in answer
+            
+            print(f"Relevance check for '{query}': {answer} → {is_relevant}")
+            return is_relevant
+            
+        except Exception as e:
+            print(f"Relevance check failed: {e}, falling back to keyword check")
+            # Fallback to keyword-based check
+            mf_keywords = [
+                'mutual fund', 'mf', 'fund', 'scheme', 'nav', 'aum',
+                'expense ratio', 'exit load', 'sip', 'elss', 'lock-in',
+                'riskometer', 'benchmark', 'hdfc', 'investment'
+            ]
+            return any(keyword in query_lower for keyword in mf_keywords)
+    
+    def is_out_of_context(self, query: str) -> bool:
+        """
+        Detect out-of-context queries using LLM relevance check.
+        This is now a simple wrapper around is_mutual_fund_related().
+        """
+        # If it's a greeting or advice query, it's not out-of-context
         if self.is_greeting(query):
             return False
         
-        # If it's advice-seeking, it's not out-of-context (handled separately)
         if self.is_advice_query(query):
             return False
         
-        # If no MF terms, it's likely out of context
-        if not has_mf_terms:
-            # Check if it's a general knowledge question
-            general_patterns = [r'^who (is|was)', r'^what (is|was)', r'^when (is|was)', r'^where (is|was)', r'^why (is|was)', r'^how (is|was)']
-            is_general_question = any(re.search(pattern, query_lower) for pattern in general_patterns)
-            if is_general_question:
-                return True
-        
-        return False  # Default to factual if unsure
+        # Use LLM to check if it's MF-related
+        # If NOT MF-related, then it's out-of-context
+        return not self.is_mutual_fund_related(query)
     
     def llm_classify_query(self, query: str) -> str:
         """Use LLM to classify ambiguous queries for better intent understanding"""
@@ -787,6 +781,10 @@ Answer:"""
         
         # Stage 2: Generate answer
         answer = self.generate_answer(refined_query, chunks, citation_info['url'])
+        
+        # Check if answer is an error message - don't add source citation
+        if answer.startswith("Error:") or answer.startswith("I encountered an error"):
+            return answer, None
         
         # Check if LLM couldn't find the information
         no_info_indicators = [
