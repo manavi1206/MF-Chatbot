@@ -259,12 +259,6 @@ if query:
     
     st.rerun()
 
-# Footer (minimal styling)
-st.markdown("<br>", unsafe_allow_html=True)
-rag_system = RAGSystem()
-last_updated = rag_system.get_last_updated_date()
-st.caption(f"📅 Last updated: {last_updated}")
-
 # Sidebar with info
 with st.sidebar:
     st.header("ℹ️ About")
@@ -303,4 +297,10 @@ with st.sidebar:
     if st.button("🗑️ Clear Chat History"):
         st.session_state.chat_history = []
         st.rerun()
+    
+    # Show last updated in sidebar footer
+    st.markdown("---")
+    rag_system = RAGSystem()
+    last_updated = rag_system.get_last_updated_date()
+    st.caption(f"📅 Last updated: {last_updated}")
 
