@@ -710,7 +710,7 @@ Answer:"""
         return formatted
     
     def needs_clarification(self, query: str, chat_history: List[Dict[str, str]]) -> Tuple[bool, Optional[str]]:
-        """Check if query needs clarification (e.g., which fund?)
+        """Use LLM to intelligently detect if query needs fund specification.
         
         Also checks chat history to infer fund context if user asked about a fund recently.
         """
@@ -734,32 +734,59 @@ Answer:"""
                 if inferred_fund:
                     break
         
-        # List of ambiguous queries that need fund specification
-        # Note: No \b word boundaries to catch queries with filler words like "hmm minimum sip"
-        ambiguous_patterns = [
-            (r'(minim[ua]m?|min)[\s\-]*(sip|investment|amount)', 
-             "Which fund would you like to know about?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'(expense\s*ratio|ter|fees)', 
-             "Which fund's expense ratio would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'(exit\s*load|redemption)', 
-             "Which fund's exit load would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\b(lock.?in|lock.in period)\b', 
-             "Are you asking about:\n\n• **ELSS lock-in period** (3 years mandatory)\n• **Exit load period** for other funds (usually 1 year)\n\nPlease specify which fund or if you meant ELSS lock-in."),
-            (r'\b(benchmark|index)\b', 
-             "Which fund's benchmark would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\bfund manager\b', 
-             "Which fund's fund manager would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\baum\b', 
-             "Which fund's AUM would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-        ]
+        # If fund is mentioned or inferred, no clarification needed
+        if has_fund_mention or inferred_fund:
+            return False, None
         
-        # If no fund mentioned and no inferred fund, check if query is ambiguous
-        if not has_fund_mention and not inferred_fund:
-            for pattern, clarification in ambiguous_patterns:
-                if re.search(pattern, query_lower):
-                    return True, clarification
-        
-        return False, None
+        # Use LLM to detect if query needs fund specification
+        clarification_prompt = f"""Does this query need a specific mutual fund name to be answered?
+
+Query: "{query}"
+
+Context: We have 4 HDFC mutual funds (Large Cap, Flexi Cap, ELSS, Hybrid).
+
+Answer "yes" if the query is asking about a fund-specific metric/detail that varies by fund.
+Answer "no" if the query is general or doesn't need a specific fund.
+
+Examples:
+- "minimum sip amount" → yes (varies by fund)
+- "expense ratio" → yes (varies by fund)
+- "exit load" → yes (varies by fund)
+- "benchmark" → yes (varies by fund)
+- "fund manager" → yes (varies by fund)
+- "what is ELSS lock-in period" → no (specific to ELSS, already clear)
+- "how to download CAS statement" → no (general process)
+- "how to invest" → no (general process)
+- "what funds do you have" → no (coverage query)
+
+Answer ONLY "yes" or "no":"""
+
+        try:
+            result = self._call_llm(
+                clarification_prompt,
+                max_tokens=5,
+                temperature=0.0,
+                system_prompt="You are a clarification detector. Answer only 'yes' or 'no'."
+            )
+            
+            needs_clarif = 'yes' in result.strip().lower()
+            
+            if needs_clarif:
+                clarification_msg = """Which fund would you like to know about?
+
+We cover:
+• HDFC Large Cap Fund
+• HDFC Flexi Cap Fund
+• HDFC TaxSaver (ELSS)
+• HDFC Hybrid Equity Fund"""
+                return True, clarification_msg
+            
+            return False, None
+            
+        except Exception as e:
+            print(f"Clarification detection failed: {e}, skipping clarification")
+            # If LLM fails, don't ask for clarification (let RAG handle it)
+            return False, None
     
     def handle_factual_query(self, query: str, chat_history: List[Dict[str, str]]) -> Tuple[str, Optional[str]]:
         """Handle factual query using two-stage RAG"""
