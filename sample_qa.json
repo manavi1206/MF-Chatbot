@@ -1,0 +1,81 @@
+[
+  {
+    "query": "What is the expense ratio of HDFC Large Cap Fund?",
+    "type": "factual",
+    "answer": "The Total Expense Ratio (TER) for HDFC Large Cap Fund is 0.96% as per the October 2025 factsheet. This includes all expenses for running and managing the scheme, calculated as a percentage of the scheme's average Net Asset Value.",
+    "citation": "https://files.hdfcfund.com/s3fs-public/2025-11/HDFC%20MF%20Factsheet%20-%20October%202025.pdf"
+  },
+  {
+    "query": "What is the exit load for HDFC Large Cap Fund?",
+    "type": "factual",
+    "answer": "HDFC Large Cap Fund charges an exit load of 1.00% if units are redeemed or switched out within 1 year from the date of allotment. No exit load is payable if units are redeemed after 1 year from the date of allotment.",
+    "citation": "https://files.hdfcfund.com/s3fs-public/KIM/2025-05/KIM%20-%20HDFC%20Large%20Cap%20Fund%20dated%20May%2030%2C%202025.pdf"
+  },
+  {
+    "query": "What is the minimum SIP amount for HDFC funds?",
+    "type": "factual",
+    "answer": "The minimum SIP (Systematic Investment Plan) amount for HDFC Mutual Funds is ₹100 per installment. This allows investors to start investing with small amounts regularly.",
+    "citation": "https://files.hdfcfund.com/s3fs-public/2025-11/HDFC%20MF%20Factsheet%20-%20October%202025.pdf"
+  },
+  {
+    "query": "What is the ELSS lock-in period?",
+    "type": "factual",
+    "answer": "ELSS (Equity Linked Savings Scheme) funds have a statutory lock-in period of 3 years as per SEBI regulations. This means investors cannot redeem their ELSS investments before completing 3 years from the date of allotment.",
+    "citation": "https://investor.sebi.gov.in/elss.html"
+  },
+  {
+    "query": "What is a riskometer?",
+    "type": "factual",
+    "answer": "A riskometer is a visual risk indicator that shows the risk level of a mutual fund scheme. It helps investors understand the risk associated with a particular scheme before investing. Risk levels range from Low to Very High.",
+    "citation": "https://www.amfiindia.com/investor/knowledge-center-info?zoneName=riskInMutualFunds"
+  },
+  {
+    "query": "What is the benchmark for HDFC Large Cap Fund?",
+    "type": "factual",
+    "answer": "The benchmark for HDFC Large Cap Fund is NIFTY 100 Total Return Index (TRI). A benchmark is a standard market index used to compare a fund's performance and helps investors know whether the fund is performing better, worse, or similar to the market.",
+    "citation": "https://files.hdfcfund.com/s3fs-public/2025-11/HDFC%20MF%20Factsheet%20-%20October%202025.pdf"
+  },
+  {
+    "query": "How to download CAS statement?",
+    "type": "factual",
+    "answer": "You can download your Consolidated Account Statement (CAS) from the CAMS website. Visit the CAMS website, log in with your PAN or Folio number, and navigate to the CAS section to generate and download your statement.",
+    "citation": "https://groww.in/help/mutual-funds/mf-track-and-switch/how-to-generate-my-consolidated-account-statement--cas--from-the-cams-website--60"
+  },
+  {
+    "query": "Hello",
+    "type": "greeting",
+    "answer": "Hello! I'm a facts-only mutual fund assistant. I can help you with factual questions about HDFC Mutual Funds, such as expense ratios, exit loads, lock-in periods, riskometers, benchmarks, and more. What would you like to know about HDFC Mutual Funds?",
+    "citation": null
+  },
+  {
+    "query": "What is the capital of India?",
+    "type": "out_of_context",
+    "answer": "I'm designed to answer factual questions about mutual funds only. I can help you with information about HDFC Mutual Funds, including expense ratios and fees, exit loads and lock-in periods, riskometers and benchmarks, and how to download statements. Please ask me a question about mutual funds.",
+    "citation": null
+  },
+  {
+    "query": "Should I buy HDFC Large Cap Fund?",
+    "type": "advice",
+    "answer": "I provide factual information only and cannot give investment advice. For guidance on investment decisions, please consult a registered financial advisor. You can learn more about mutual funds at the AMFI Knowledge Center.",
+    "citation": "https://www.amfiindia.com/investor/knowledge-center-info?zoneName=IntroductionMutualFunds"
+  },
+  {
+    "query": "Is HDFC Flexi Cap Fund good for me?",
+    "type": "advice",
+    "answer": "I provide factual information only and cannot give investment advice. For guidance on investment decisions, please consult a registered financial advisor. You can learn more about mutual funds at the AMFI Knowledge Center.",
+    "citation": "https://www.amfiindia.com/investor/knowledge-center-info?zoneName=IntroductionMutualFunds"
+  },
+  {
+    "query": "What is the expense ratio?",
+    "type": "factual",
+    "answer": "Expense ratio, also known as Total Expense Ratio (TER), represents the costs for running and managing a Mutual Fund scheme. It is calculated as a percentage of the scheme's average Net Asset Value (NAV) and includes management fees, administrative expenses, and other operational costs.",
+    "citation": "https://www.amfiindia.com/investor/knowledge-center-info?zoneName=expenseRatio"
+  },
+  {
+    "query": "How to get tax statements for mutual funds?",
+    "type": "factual",
+    "answer": "You can get tax statements or tax proof for Section 80C deductions from your mutual fund account. These statements are typically available in your online account on the AMC website or through the RTA (Registrar and Transfer Agent) portal. Contact your AMC or check your online account for tax statements.",
+    "citation": "https://groww.in/help/my-account/ma-others/where-can-i-get-the-tax-proof-for-section-80c"
+  }
+]
+

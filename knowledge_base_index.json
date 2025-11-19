@@ -1,0 +1,24 @@
+{
+  "funds": {
+    "LARGE_CAP": "HDFC Large Cap Fund",
+    "FLEXI_CAP": "HDFC Flexi Cap Fund",
+    "ELSS": "HDFC TaxSaver (ELSS)",
+    "HYBRID": "HDFC Hybrid Equity Fund"
+  },
+  "regulatory_topics": {
+    "amfi_intro": "AMFI - Introduction to Mutual Funds",
+    "amfi_expense_ratio": "AMFI - Expense Ratio",
+    "amfi_riskometer_1": "AMFI - Riskometer_Derived",
+    "amfi_riskometer_2": "AMFI - Riskometer_Where to Find",
+    "amfi_riskometer_3": "AMFI - Riskometer_SEBI",
+    "amfi_riskometer_4": "AMFI - Riskometer",
+    "sebi_categories": "SEBI - Mutual Fund Categorization Circular Summary",
+    "sebi_elss_lockin": "SEBI - ELSS Lock-in Guidelines"
+  },
+  "help_topics": {
+    "groww_help_overall": "Groww - Mutual Funds Help Center",
+    "groww_cas": "Groww - How to Download CAS",
+    "groww_tax_reports": "Groww - Tax Statements / MF Reports",
+    "groww_transaction_history": "Groww - Transaction History"
+  }
+}

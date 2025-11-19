@@ -1,0 +1,121 @@
+{
+  "total_sources": 13,
+  "by_type": {
+    "factsheet_consolidated": 1,
+    "regulatory": 8,
+    "help_page": 4
+  },
+  "by_authority": {
+    "AMC": 1,
+    "AMFI": 3,
+    "MutualFundSahiHai": 2,
+    "SEBI": 3,
+    "GROWW": 4
+  },
+  "sources": [
+    {
+      "source_id": "amc_factsheet",
+      "title": "HDFC Mutual Fund - Consolidated Factsheet (Oct 2025)",
+      "type": "factsheet_consolidated",
+      "authority": "AMC",
+      "has_content": false,
+      "content_length": 0
+    },
+    {
+      "source_id": "amfi_intro",
+      "title": "AMFI - Introduction to Mutual Funds",
+      "type": "regulatory",
+      "authority": "AMFI",
+      "has_content": true,
+      "content_length": 3680
+    },
+    {
+      "source_id": "amfi_expense_ratio",
+      "title": "AMFI - Expense Ratio",
+      "type": "regulatory",
+      "authority": "AMFI",
+      "has_content": true,
+      "content_length": 2552
+    },
+    {
+      "source_id": "amfi_riskometer_1",
+      "title": "AMFI - Riskometer_Derived",
+      "type": "regulatory",
+      "authority": "MutualFundSahiHai",
+      "has_content": true,
+      "content_length": 3268
+    },
+    {
+      "source_id": "amfi_riskometer_2",
+      "title": "AMFI - Riskometer_Where to Find",
+      "type": "regulatory",
+      "authority": "MutualFundSahiHai",
+      "has_content": true,
+      "content_length": 2051
+    },
+    {
+      "source_id": "amfi_riskometer_3",
+      "title": "AMFI - Riskometer_SEBI",
+      "type": "regulatory",
+      "authority": "SEBI",
+      "has_content": true,
+      "content_length": 239884
+    },
+    {
+      "source_id": "amfi_riskometer_4",
+      "title": "AMFI - Riskometer",
+      "type": "regulatory",
+      "authority": "AMFI",
+      "has_content": true,
+      "content_length": 8578
+    },
+    {
+      "source_id": "sebi_categories",
+      "title": "SEBI - Mutual Fund Categorization Circular Summary",
+      "type": "regulatory",
+      "authority": "SEBI",
+      "has_content": true,
+      "content_length": 15900
+    },
+    {
+      "source_id": "sebi_elss_lockin",
+      "title": "SEBI - ELSS Lock-in Guidelines",
+      "type": "regulatory",
+      "authority": "SEBI",
+      "has_content": true,
+      "content_length": 2835
+    },
+    {
+      "source_id": "groww_help_overall",
+      "title": "Groww - Mutual Funds Help Center",
+      "type": "help_page",
+      "authority": "GROWW",
+      "has_content": true,
+      "content_length": 312
+    },
+    {
+      "source_id": "groww_cas",
+      "title": "Groww - How to Download CAS",
+      "type": "help_page",
+      "authority": "GROWW",
+      "has_content": true,
+      "content_length": 6700
+    },
+    {
+      "source_id": "groww_tax_reports",
+      "title": "Groww - Tax Statements / MF Reports",
+      "type": "help_page",
+      "authority": "GROWW",
+      "has_content": true,
+      "content_length": 6439
+    },
+    {
+      "source_id": "groww_transaction_history",
+      "title": "Groww - Transaction History",
+      "type": "help_page",
+      "authority": "GROWW",
+      "has_content": true,
+      "content_length": 6505
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+mf-env/
+
+# Temporary files
+temp_*.pdf
+*.backup
+*.bak
+
+# Data files (keep knowledge base, exclude others)
+chroma_db/
+*.log
+test_output.log
+test_results.txt
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Update summaries
+update_summary.json
+

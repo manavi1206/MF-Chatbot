@@ -1,0 +1,20 @@
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+pdfplumber>=0.10.0
+pandas>=2.0.0
+lxml>=4.9.0
+
+# RAG and LLM dependencies
+streamlit>=1.28.0
+google-generativeai>=0.3.0
+sentence-transformers>=2.2.0
+chromadb>=0.4.0
+python-dotenv>=1.0.0
+
+# Local LLM support (optional - install only if using local models)
+ollama>=0.1.0  # Ollama support for local LLM
+# transformers>=4.30.0  # Uncomment for Hugging Face support
+# torch>=2.0.0  # Uncomment for Hugging Face support
+# openai>=1.0.0  # Uncomment for OpenAI support
+# anthropic>=0.18.0  # Uncomment for Anthropic support
+
