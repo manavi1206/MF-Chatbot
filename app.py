@@ -141,9 +141,9 @@ for i, exchange in enumerate(st.session_state.chat_history):
         st.write(exchange['user'])
     
     with st.chat_message("assistant"):
+        # Don't show the raw markdown source link (it's already in the answer)
+        # Just show the answer which includes the formatted source
         st.markdown(exchange['assistant'])
-        if exchange.get('citation'):
-            st.caption(f"🔗 Source: {exchange['citation']}")
 
 # Handle example query
 if 'example_query' in st.session_state:
@@ -181,7 +181,7 @@ if query:
                 st.session_state.chat_history[-1]['assistant'] = answer
                 if citation_url:
                     st.session_state.chat_history[-1]['citation'] = citation_url
-                    st.caption(f"🔗 Source: {citation_url}")
+                # Don't show caption - source is already formatted in the answer
                 
             except Exception as e:
                 error_msg = f"I encountered an error: {str(e)}. Please try again."

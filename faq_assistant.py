@@ -469,7 +469,8 @@ Answer:"""
         answer = re.sub(r'\s*Source:.*$', '', answer, flags=re.IGNORECASE)
         answer = answer.strip()
         
-        formatted = f"{answer}\n\n**Source:** {citation}\n\n*Last updated from sources: {last_updated}*"
+        # Format with cleaner layout - source in smaller text
+        formatted = f"{answer}\n\n---\n\n📄 **Source:** {citation}\n\n*Last updated: {last_updated}*"
         return formatted
     
     def needs_clarification(self, query: str, chat_history: List[Dict[str, str]]) -> Tuple[bool, Optional[str]]:

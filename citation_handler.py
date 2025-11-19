@@ -55,11 +55,25 @@ class CitationHandler:
             'title': title
         }
     
+    def clean_url(self, url: str) -> str:
+        """Clean URL by removing tracking parameters"""
+        if not url:
+            return url
+        
+        # Remove common tracking parameters
+        if '?' in url:
+            base_url = url.split('?')[0]
+            return base_url
+        return url
+    
     def format_citation(self, url: str, title: str) -> str:
-        """Format citation as markdown link"""
+        """Format citation as markdown link with cleaned URL"""
         if not url or not title:
             return ""
-        return f"[{title}]({url})"
+        
+        # Clean the URL to remove tracking parameters
+        clean_url = self.clean_url(url)
+        return f"[{title}]({clean_url})"
     
     def validate_source(self, url: str) -> bool:
         """Validate that URL exists in sources.csv"""
