@@ -16,12 +16,25 @@ class FAQAssistant:
         Initialize FAQ Assistant with support for multiple LLM backends
         
         Args:
-            model_type: "ollama", "gemini", "openai", "anthropic" (default: from LLM_MODEL_TYPE env var or "ollama")
+            model_type: "ollama", "gemini", "openai", "anthropic" (default: from LLM_MODEL_TYPE env var or "gemini")
             model_name: Model name (e.g., "llama3.1:8b" for Ollama, "gemini-2.0-flash" for Gemini)
             api_key: API key (only needed for cloud models)
         """
-        self.model_type = (model_type or os.getenv('LLM_MODEL_TYPE', 'ollama')).lower()
-        self.model_name = model_name or os.getenv('LLM_MODEL_NAME', 'llama3.1:8b')
+        # Default to Gemini for production
+        self.model_type = (model_type or os.getenv('LLM_MODEL_TYPE', 'gemini')).lower()
+        
+        # Set default model name based on type
+        if not model_name:
+            if self.model_type == 'gemini':
+                model_name = os.getenv('LLM_MODEL_NAME', 'gemini-2.0-flash')
+            elif self.model_type == 'openai':
+                model_name = os.getenv('LLM_MODEL_NAME', 'gpt-3.5-turbo')
+            elif self.model_type == 'anthropic':
+                model_name = os.getenv('LLM_MODEL_NAME', 'claude-3-5-sonnet-20241022')
+            else:  # ollama
+                model_name = os.getenv('LLM_MODEL_NAME', 'llama3.1:8b')
+        
+        self.model_name = model_name
         self.api_key = api_key
         self.model = None
         self._initialize_model()
