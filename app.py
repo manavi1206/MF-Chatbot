@@ -58,15 +58,37 @@ st.markdown("""
         border: none;
     }
     
-    /* Chat messages */
-    .stChatMessage {
-        background-color: white;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
+    /* Chat messages - User messages */
+    .stChatMessage[data-testid="user-message"] {
+        background-color: #F8F9FA;
+        border: 1px solid #E0E0E0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
     
-    /* Reduce spacing between user and assistant messages */
+    /* Chat messages - Assistant messages */
+    .stChatMessage[data-testid="assistant-message"] {
+        background-color: #FFFFFF;
+        border: 1px solid #D0D0D0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* All chat messages fallback */
+    .stChatMessage {
+        background-color: white;
+        border: 1px solid #E0E0E0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Reduce spacing between consecutive messages */
     .stChatMessage + .stChatMessage {
         margin-top: 0.25rem;
     }
@@ -86,6 +108,22 @@ st.markdown("""
         background-color: #F8F9FA;
         border-radius: 4px;
         margin-top: 0.5rem;
+    }
+    
+    /* Blockquote styling for citations */
+    .stChatMessage blockquote {
+        border-left: 3px solid var(--groww-green);
+        background-color: #F8F9FA;
+        padding: 0.75rem 1rem;
+        margin: 0.75rem 0 0 0;
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
+    
+    /* Avatar styling */
+    .stChatMessage .stAvatar {
+        border: 2px solid #E0E0E0;
+        border-radius: 50%;
     }
 </style>
 """, unsafe_allow_html=True)
