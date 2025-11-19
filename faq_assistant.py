@@ -735,12 +735,13 @@ Answer:"""
                     break
         
         # List of ambiguous queries that need fund specification
+        # Note: No \b word boundaries to catch queries with filler words like "hmm minimum sip"
         ambiguous_patterns = [
-            (r'\b(minim[ua]m?|min).*(sip|investment|amount)', 
+            (r'(minim[ua]m?|min)[\s\-]*(sip|investment|amount)', 
              "Which fund would you like to know about?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\b(expense ratio|ter|fees)\b', 
+            (r'(expense\s*ratio|ter|fees)', 
              "Which fund's expense ratio would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
-            (r'\b(exit load|redemption)\b', 
+            (r'(exit\s*load|redemption)', 
              "Which fund's exit load would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\b(lock.?in|lock.in period)\b', 
              "Are you asking about:\n\n• **ELSS lock-in period** (3 years mandatory)\n• **Exit load period** for other funds (usually 1 year)\n\nPlease specify which fund or if you meant ELSS lock-in."),
