@@ -113,10 +113,10 @@ st.markdown("""
     /* Blockquote styling for citations */
     .stChatMessage blockquote {
         border-left: 2px solid var(--groww-green);
-        background-color: #F9FAFB;
-        padding: 0.625rem 0.875rem;
+        background-color: transparent;
+        padding: 0.5rem 0 0.5rem 0.875rem;
         margin: 0.625rem 0 0 0;
-        border-radius: 6px;
+        border-radius: 0;
         font-size: 0.875rem;
     }
     
