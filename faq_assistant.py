@@ -331,8 +331,10 @@ class FAQAssistant:
             r'what is (the )?(population|area|size)',
             r'when (is|was|will)',
             r'where (is|was|are)',
+            r'\b(do you|can you|did you)\s+(cook|eat|sleep|dance|sing|play|run|walk)',
+            r'\b(cooking|baking|chef|kitchen|meal|breakfast|lunch|dinner)\b',
             r'(cricket|football|sports|movie|film|music)',
-            r'(recipe|food|cooking|restaurant)',
+            r'(recipe|food|restaurant)',
             r'(technology|computer|phone|laptop)(?! fund)',
             r'(game|gaming|video)',
             r'(travel|tourism|hotel|flight)'
@@ -371,9 +373,14 @@ Query: "{query}"
 Categories:
 1. greeting - User is saying hi, hello, or greeting
 2. coverage - User asking what funds/schemes/questions you cover or your capabilities
-3. factual - User wants factual information about mutual funds (expense ratio, SIP, exit load, etc.)
+3. factual - User wants factual information about MUTUAL FUNDS ONLY (expense ratio, SIP, exit load, lock-in, benchmark, etc.)
 4. advice - User seeking investment advice or recommendations (should I invest, which is better, etc.)
-5. out_of_context - Completely unrelated to mutual funds (politics, sports, jokes, random text/numbers, etc.)
+5. out_of_context - Completely unrelated to mutual funds (politics, sports, jokes, cooking, personal questions, random text, etc.)
+
+IMPORTANT: 
+- If the query has NOTHING to do with mutual funds or investments, classify as "out_of_context"
+- Examples of out_of_context: "do you cook", "what's the weather", "tell me a joke", "who is PM"
+- Only classify as "factual" if it's clearly about mutual fund information
 
 Return ONLY the category name (one word), nothing else.
 
