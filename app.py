@@ -62,8 +62,13 @@ st.markdown("""
     .stChatMessage {
         background-color: white;
         border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Reduce spacing between user and assistant messages */
+    .stChatMessage + .stChatMessage {
+        margin-top: 0.25rem;
     }
     
     /* Remove excess spacing */
