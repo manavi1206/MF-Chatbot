@@ -214,16 +214,19 @@ python test_queries.py
 
 ## Deployment
 
-### Option 1: Streamlit Cloud (Easiest - 5 minutes)
+### Option 1: Streamlit Cloud (Easiest - 5 minutes) ⭐ Recommended
 
-1. Push to GitHub
-2. Go to https://streamlit.io/cloud
-3. Connect repository
-4. Set environment variables:
-   - `LLM_MODEL_TYPE=openai` (Ollama not supported on Streamlit Cloud)
-   - `LLM_MODEL_NAME=gpt-3.5-turbo`
-   - `OPENAI_API_KEY=your_key`
-5. Deploy!
+1. **Push to GitHub** (already done if you're reading this)
+2. **Go to** https://streamlit.io/cloud
+3. **Connect repository:** `manavi1206/MF-Chatbot`
+4. **Set environment variables** in Streamlit Cloud dashboard:
+   - `LLM_MODEL_TYPE=gemini`
+   - `LLM_MODEL_NAME=gemini-2.0-flash`
+   - `GEMINI_API_KEY=your_gemini_api_key_here`
+   - `ENVIRONMENT=production` (optional)
+5. **Deploy!** The app will be live in ~2 minutes
+
+**Get Gemini API Key:** https://makersuite.google.com/app/apikey
 
 ### Option 2: Docker + Cloud Provider
 
