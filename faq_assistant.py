@@ -736,7 +736,7 @@ Answer:"""
         
         # List of ambiguous queries that need fund specification
         ambiguous_patterns = [
-            (r'\b(minimum|min).*(sip|investment|amount)', 
+            (r'\b(minim[ua]m?|min).*(sip|investment|amount)', 
              "Which fund would you like to know about?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
             (r'\b(expense ratio|ter|fees)\b', 
              "Which fund's expense ratio would you like to know?\n\nWe cover:\n• HDFC Large Cap Fund\n• HDFC Flexi Cap Fund\n• HDFC TaxSaver (ELSS)\n• HDFC Hybrid Equity Fund"),
@@ -762,9 +762,10 @@ Answer:"""
     
     def handle_factual_query(self, query: str, chat_history: List[Dict[str, str]]) -> Tuple[str, Optional[str]]:
         """Handle factual query using two-stage RAG"""
-        # Check if query needs clarification
+        # Check if query needs clarification BEFORE any processing
         needs_clarif, clarification_msg = self.needs_clarification(query, chat_history)
         if needs_clarif:
+            print(f"Query needs clarification: '{query}'")
             return clarification_msg, None
         
         # Ensure vector store is initialized
