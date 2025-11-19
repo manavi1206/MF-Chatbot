@@ -281,7 +281,25 @@ class FAQAssistant:
     
     def is_out_of_context(self, query: str) -> bool:
         """Detect out-of-context queries (non-MF related)"""
-        query_lower = query.lower()
+        query_lower = query.lower().strip()
+        
+        # Check for meaningless queries first
+        # 1. Only numbers (like "565665")
+        if query_lower.isdigit():
+            return True
+        
+        # 2. Very short queries (1-2 characters) that aren't greetings
+        if len(query_lower) <= 2 and not self.is_greeting(query_lower):
+            return True
+        
+        # 3. Only special characters or very short gibberish
+        if len(query_lower) <= 3 and not any(c.isalpha() for c in query_lower):
+            return True
+        
+        # 4. Queries with mostly numbers and few/no words
+        words = re.findall(r'[a-zA-Z]+', query_lower)
+        if len(words) == 0 or (len(query_lower) > 5 and len(''.join(words)) < len(query_lower) * 0.3):
+            return True
         
         # MF-related keywords that indicate the query is relevant
         mf_keywords = [
