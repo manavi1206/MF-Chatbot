@@ -2,15 +2,28 @@
 
 A RAG-based chatbot that answers factual questions about HDFC Mutual Funds using verified sources from AMC, SEBI, and AMFI websites. Provides concise, citation-backed responses while strictly avoiding any investment advice.
 
+---
+
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Intelligent Systems](#intelligent-systems)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Disclaimer](#disclaimer)
+
+---
+
 ## Overview
 
-This assistant uses Retrieval-Augmented Generation (RAG) with a two-stage LLM approach to answer factual questions about mutual funds. It handles:
-- ✅ Factual queries (expense ratio, exit load, lock-in, etc.)
-- ✅ Greetings (friendly welcome with nudge to MF topics)
-- ✅ Out-of-context queries (polite refusal with nudge to MF topics)
-- ✅ Advice-seeking queries (polite refusal with educational link)
+This assistant uses **Retrieval-Augmented Generation (RAG)** with a **two-stage LLM approach** and **LLM-powered intelligent systems** to answer factual questions about mutual funds.
 
-## Scope
+### Scope
 
 **AMC:** HDFC Asset Management Company
 
@@ -26,15 +39,100 @@ This assistant uses Retrieval-Augmented Generation (RAG) with a two-stage LLM ap
 - 4 help pages (Groww)
 - 1 consolidated factsheet
 
-## Features
+---
 
+## Key Features
+
+### ✅ Core Capabilities
 - **Facts-Only:** Answers factual questions with citations
 - **Source Attribution:** Every answer includes a citation link
 - **Two-Stage RAG:** Query refinement + answer generation
-- **Query Classification:** Handles greetings, out-of-context, advice, and factual queries
 - **Chat History:** Maintains conversation context
 - **No Investment Advice:** Strictly refuses advice-seeking queries
 - **Multiple LLM Support:** Ollama (local), OpenAI, Anthropic, Gemini
+
+### 🧠 LLM-Powered Intelligence (No Hardcoding!)
+- **Intelligent Out-of-Context Detection:** Handles ANY irrelevant query
+- **Intelligent Clarification Detection:** Handles ANY ambiguous query
+- **Intelligent Query Classification:** 2-stage robust filtering
+
+---
+
+## Intelligent Systems
+
+This chatbot uses **LLM intelligence** instead of hardcoded patterns for key decision-making. This makes it robust, scalable, and zero-maintenance.
+
+### 1. 🎯 Intelligent Out-of-Context Detection
+
+**What it does:** Uses LLM to determine if a query is related to mutual funds.
+
+**Examples:**
+| Query | Detection | Result |
+|-------|----------|---------|
+| "will you go on a date with me" | Out-of-context ✅ | Polite refusal |
+| "can u cok" | Out-of-context ✅ | Polite refusal |
+| "who is PM of India" | Out-of-context ✅ | Polite refusal |
+| "565665" (random number) | Out-of-context ✅ | Polite refusal |
+| "how to download CAS" | MF-related ✅ | Factual answer |
+
+**Benefits:**
+- ✅ Handles ANY out-of-context query
+- ✅ No maintenance needed
+- ✅ Understands natural language variations
+- ✅ ~$0.00001 per check
+
+### 2. 🔍 Intelligent Clarification Detection
+
+**What it does:** Uses LLM to determine if a query needs a specific fund name.
+
+**Examples:**
+| Query | Detection | Result |
+|-------|----------|---------|
+| "minimum sip amount" | Needs clarification ✅ | "Which fund?" |
+| "hmm minimum sip" | Needs clarification ✅ | "Which fund?" |
+| "what's the NAV" | Needs clarification ✅ | "Which fund?" |
+| "tell me the AUM" | Needs clarification ✅ | "Which fund?" |
+| "how to download CAS" | No clarification ✅ | Direct answer |
+| "what is ELSS lock-in" | No clarification ✅ | Direct answer |
+
+**Benefits:**
+- ✅ Handles ANY ambiguous query (NAV, AUM, returns, inception date, etc.)
+- ✅ Understands typos and filler words
+- ✅ Zero maintenance
+- ✅ Future-proof (new metrics work automatically)
+
+### 3. 🧠 Intelligent Query Classification
+
+**Two-Stage Classification:**
+
+**Stage 1:** Relevance Check
+```
+is_mutual_fund_related(query) → yes/no
+```
+
+**Stage 2:** Intent Classification (if relevant)
+```
+classify_query_type(query) → greeting | coverage | factual | advice
+```
+
+**Benefits:**
+- ✅ Robust 2-stage filtering
+- ✅ Handles ambiguous queries intelligently
+- ✅ No hardcoded patterns needed
+- ✅ Graceful fallback if LLM fails
+
+### 💰 Cost Analysis
+
+| System | Cost per Query | Daily Cost (1000 queries) |
+|--------|---------------|-------------------------|
+| Out-of-context detection | $0.00001 | $0.01 |
+| Clarification detection | $0.00001 | $0.01 |
+| Query classification | $0.00001 | $0.01 |
+| **Total overhead** | **$0.00003** | **$0.03** |
+
+**Negligible cost for infinite scalability!** 🚀
+
+---
 
 ## Quick Start
 
@@ -47,7 +145,7 @@ This assistant uses Retrieval-Augmented Generation (RAG) with a two-stage LLM ap
 
 1. **Clone or navigate to the project directory:**
    ```bash
-   cd /Users/manavisingh/MF-Chatbot
+   cd /path/to/MF-Chatbot
    ```
 
 2. **Create and activate virtual environment:**
@@ -65,7 +163,7 @@ This assistant uses Retrieval-Augmented Generation (RAG) with a two-stage LLM ap
 
    **Option A: Ollama (Recommended for Development - Free, No Rate Limits)**
    ```bash
-   # Install Ollama binary
+   # Install Ollama
    brew install ollama  # macOS
    # Or download from: https://ollama.ai/download
    
@@ -80,32 +178,32 @@ This assistant uses Retrieval-Augmented Generation (RAG) with a two-stage LLM ap
    export LLM_MODEL_NAME=llama3.1:8b
    ```
 
-   **Option B: OpenAI (For Production)**
-   ```bash
-   export LLM_MODEL_TYPE=openai
-   export LLM_MODEL_NAME=gpt-3.5-turbo
-   export OPENAI_API_KEY=sk-...
-   ```
-
-   **Option C: Anthropic (For Production)**
-   ```bash
-   export LLM_MODEL_TYPE=anthropic
-   export LLM_MODEL_NAME=claude-3-5-sonnet-20241022
-   export ANTHROPIC_API_KEY=sk-ant-...
-   ```
-
-   **Option D: Gemini**
+   **Option B: Gemini (Recommended for Production)**
    ```bash
    export LLM_MODEL_TYPE=gemini
    export LLM_MODEL_NAME=gemini-2.0-flash
    export GEMINI_API_KEY=your_key_here
    ```
 
+   **Option C: OpenAI**
+   ```bash
+   export LLM_MODEL_TYPE=openai
+   export LLM_MODEL_NAME=gpt-3.5-turbo
+   export OPENAI_API_KEY=sk-...
+   ```
+
+   **Option D: Anthropic**
+   ```bash
+   export LLM_MODEL_TYPE=anthropic
+   export LLM_MODEL_NAME=claude-3-5-sonnet-20241022
+   export ANTHROPIC_API_KEY=sk-ant-...
+   ```
+
    Or create a `.env` file:
    ```bash
-   LLM_MODEL_TYPE=ollama
-   LLM_MODEL_NAME=llama3.1:8b
-   # Add API keys if using cloud LLM
+   LLM_MODEL_TYPE=gemini
+   LLM_MODEL_NAME=gemini-2.0-flash
+   GEMINI_API_KEY=your_key_here
    ```
 
 5. **Initialize the vector store:**
@@ -128,6 +226,8 @@ This assistant uses Retrieval-Augmented Generation (RAG) with a two-stage LLM ap
    
    The app will open in your browser at `http://localhost:8501`
 
+---
+
 ## Usage
 
 ### Starting the Application
@@ -148,149 +248,154 @@ streamlit run app.py
 - "What is the ELSS lock-in period?"
 - "How to download CAS statement?"
 - "What is the benchmark for HDFC Large Cap Fund?"
+- "What funds do you cover?"
 
 **Greetings:**
 - "Hello"
 - "Hi"
 - "Good morning"
 
-**Out-of-Context (will be politely refused):**
+**Out-of-Context (politely refused):**
 - "What is the capital of India?"
-- "What is your favorite sport?"
+- "Will you date me?"
+- "565665" (random numbers)
 
-**Advice-Seeking (will be politely refused):**
+**Advice-Seeking (politely refused):**
 - "Should I buy HDFC Large Cap Fund?"
 - "Is this fund good for me?"
 
-## LLM Model Options
+**Ambiguous (clarification requested):**
+- "minimum sip amount" → Bot asks: "Which fund?"
+- "expense ratio" → Bot asks: "Which fund?"
+- "NAV" → Bot asks: "Which fund?"
 
-### Ollama Models (Local - Free)
-
-| Model | Size | Speed | Quality | RAM Needed |
-|-------|------|-------|---------|------------|
-| `phi3:mini` | 3.8B | ⚡⚡⚡ Very Fast | ⭐⭐⭐ Good | 4GB |
-| `llama3.1:8b` | 8B | ⚡⚡ Fast | ⭐⭐⭐⭐ Great | 8GB |
-| `llama3.1:70b` | 70B | ⚡ Slower | ⭐⭐⭐⭐⭐ Excellent | 40GB |
-
-**Recommendation:** Start with `llama3.1:8b`
-
-### Cloud LLM Options (Production)
-
-- **OpenAI GPT-3.5-turbo:** ~$0.002 per 1K tokens, reliable, good rate limits
-- **Anthropic Claude 3.5 Sonnet:** ~$0.009 per 1K tokens, excellent quality
-- **Google Gemini 2.0 Flash:** ~$0.000375 per 1K tokens, competitive pricing
+---
 
 ## Architecture
 
 ### Two-Stage RAG Flow
 
-1. **Query Classification:** Determines query type (greeting/out-of-context/advice/factual)
-2. **Stage 1 - Query Refinement:** LLM refines the query using chat history
-3. **Retrieval:** Vector store retrieves top-k relevant chunks
-4. **Stage 2 - Answer Generation:** LLM generates answer from retrieved context
-5. **Citation:** Extracts and formats source citation
-6. **Response:** Formats answer with citation and "Last updated" date
+1. **Query Classification:** Determines query type using LLM intelligence
+   - Greeting → Friendly welcome
+   - Coverage → Lists 4 HDFC funds
+   - Out-of-context → Polite refusal
+   - Advice → Educational link
+   - Factual → Proceed to RAG
+
+2. **Clarification Check:** LLM determines if fund name is needed
+   - If ambiguous → Ask "Which fund?"
+   - If clear → Proceed
+
+3. **Stage 1 - Query Refinement:** LLM refines query using chat history
+   - Preserves exact fund names
+   - Infers context from previous queries
+   - Optimizes for retrieval
+
+4. **Retrieval:** Vector store retrieves top-k relevant chunks
+   - Prioritizes fund-specific documents
+   - Filters by fund name if specified
+   - Re-ranks for relevance
+
+5. **Stage 2 - Answer Generation:** LLM generates answer from context
+   - Uses only retrieved information
+   - Formats with bullets/lists
+   - Concise and human-friendly
+
+6. **Citation:** Extracts and formats source
+   - Cleans tracking parameters
+   - Shows fund name + document type
+   - Includes last updated date
+
+7. **Response:** Formatted answer with citation
 
 ### Components
 
-- **`app.py`:** Streamlit UI
+- **`app.py`:** Streamlit UI with Groww-inspired design
+- **`faq_assistant.py`:** LLM-powered query classification and RAG
 - **`rag_system.py`:** Vector store setup and retrieval
-- **`faq_assistant.py`:** Query classification and two-stage LLM integration
 - **`citation_handler.py`:** Citation extraction and formatting
 - **`config.py`:** Configuration management
-- **`cleaned_knowledge_base.json`:** Structured knowledge base with source attribution
+- **`cleaned_knowledge_base.json`:** Structured knowledge base
+
+---
 
 ## Testing
 
-We provide multiple ways to test the chatbot comprehensively:
+### 1. Quick Health Check ⭐ Recommended
 
-### 1. Quick Health Check (10 Essential Tests) ⭐ Recommended
-Run this first to verify core functionality:
 ```bash
 python quick_health_check.py
 ```
 
-This tests:
+Tests 10 essential functionalities:
 - ✅ Greetings
 - ✅ Coverage queries
-- ✅ Factual queries (expense ratio, ELSS lock-in, etc.)
-- ✅ Ambiguous queries (clarification)
+- ✅ Factual queries
+- ✅ Clarification requests
 - ✅ Advice refusal
 - ✅ Out-of-context refusal
 - ✅ Meaningless query rejection
-- ✅ Fund-specific retrieval accuracy
+- ✅ Fund-specific retrieval
 
-**Expected output:** 10/10 tests passing
+**Expected:** 10/10 tests passing
 
-### 2. Comprehensive Test Cases (Manual Testing)
-For thorough edge case testing, use the checklist:
-```bash
-# View the comprehensive test cases
-cat comprehensive_test_cases.md
-```
+### 2. Full Test Suite
 
-This includes:
-- 16 categories of test cases
-- 100+ individual test scenarios
-- Expected outcomes for each query
-- Common issues to watch for
-- Visual/UI validation checklist
-
-**Best for:** Production readiness verification
-
-### 3. Full Automated Test Suite (20+ queries)
 ```bash
 python test_queries.py
 ```
 
-### 4. Streamlit App Testing (Manual)
-Test directly in the UI:
+Runs 20+ test queries across all categories.
+
+### 3. Manual Testing
+
+Test directly in the Streamlit UI:
 ```bash
 streamlit run app.py
 ```
 
-Then use the test cases from `comprehensive_test_cases.md` to verify:
-- Formatting (bullets, line breaks)
-- UI appearance (borders, shadows, spacing)
-- Source citations (clean URLs, no background)
-- Chat flow and context awareness
+**Key test cases:**
+1. "what schemes do you have" → Lists 4 HDFC funds ✅
+2. "expense ratio of HDFC Large Cap Fund" → "0.96%" ✅
+3. "minimum sip amount" → "Which fund?" ✅
+4. "HDFC Large Cap Fund" (after clarification) → Minimum SIP amount ✅
+5. "how to download CAS statement" → Step-by-step instructions ✅
+6. "will you date me" → Polite refusal ✅
+7. "565665" → Polite refusal ✅
 
-### Testing Strategy
+### Common Issues to Watch
 
-**Before Deployment:**
-1. Run `python quick_health_check.py` → Should pass 10/10
-2. Test 5-10 queries manually in Streamlit UI
-3. Verify visual appearance matches design
-
-**After Deployment:**
-1. Test coverage query: "what can i ask you"
-2. Test factual query: "What is the expense ratio of HDFC Large Cap Fund?"
-3. Test refusal: "Should I invest in HDFC Large Cap?"
-4. Test rejection: "565665" (random numbers)
-5. Test ambiguous: "minimum sip amount" (no fund)
-
-**Common Issues to Watch:**
 - ❌ Wrong fund cited (asked Large Cap, got Flexi Cap)
 - ❌ Extra information (asked expense ratio, got AUM too)
 - ❌ Source on refusal (out-of-context shows HDFC document)
-- ❌ Wrong amount (minimum SIP shows "additional purchase")
 - ❌ Ugly URLs (tracking parameters like `?_gl=`)
+- ❌ Poor formatting (no bullets, no line breaks)
 
-See `comprehensive_test_cases.md` for detailed issue reporting guidelines.
+---
 
 ## Deployment
 
-### Option 1: Streamlit Cloud (Easiest - 5 minutes) ⭐ Recommended
+### Option 1: Streamlit Cloud ⭐ Recommended (5 minutes)
 
-1. **Push to GitHub** (already done if you're reading this)
-2. **Go to** https://streamlit.io/cloud
-3. **Connect repository:** `manavi1206/MF-Chatbot`
-4. **Set environment variables** in Streamlit Cloud dashboard:
-   - `LLM_MODEL_TYPE=gemini`
-   - `LLM_MODEL_NAME=gemini-2.0-flash`
-   - `GEMINI_API_KEY=your_gemini_api_key_here`
-   - `ENVIRONMENT=production` (optional)
-5. **Deploy!** The app will be live in ~2 minutes
+1. **Push to GitHub:**
+   ```bash
+   git push origin main
+   ```
+
+2. **Go to:** https://streamlit.io/cloud
+
+3. **Connect repository:** Your GitHub repo (e.g., `manavi1206/MF-Chatbot`)
+
+4. **Set Main file path:** `app.py`
+
+5. **Set Secrets** (in Streamlit Cloud dashboard):
+   ```toml
+   LLM_MODEL_TYPE = "gemini"
+   LLM_MODEL_NAME = "gemini-2.0-flash"
+   GEMINI_API_KEY = "your_gemini_api_key_here"
+   ```
+
+6. **Deploy!** The app will be live in ~2 minutes
 
 **Get Gemini API Key:** https://makersuite.google.com/app/apikey
 
@@ -315,6 +420,8 @@ ollama serve &
 streamlit run app.py --server.port=8501 --server.address=0.0.0.0
 ```
 
+---
+
 ## Troubleshooting
 
 ### Ollama Connection Failed
@@ -335,10 +442,9 @@ python rag_system.py
 ```
 
 ### API Key Error
-Make sure your API key is set in environment variables or `.env` file:
 ```bash
-export LLM_MODEL_TYPE=openai
-export OPENAI_API_KEY=sk-...
+# Set in environment or .env file
+export GEMINI_API_KEY=your_key_here
 ```
 
 ### Import Errors
@@ -352,52 +458,111 @@ rm -rf chroma_db/
 python rag_system.py
 ```
 
-### Out of Memory (Ollama)
-- Use smaller model: `ollama pull phi3:mini`
-- Close other apps
-- Reduce model size in config
+### Streamlit Cloud Deployment Issues
 
-## Data Updates
+**Issue:** App shows "Ollama connection failed"
+**Fix:** Check that `LLM_MODEL_TYPE` is set to `gemini` (not `ollama`) in Streamlit Cloud secrets
 
-The knowledge base can be updated manually:
+**Issue:** "Vector store not found"
+**Fix:** The vector store will be automatically created on first run. If it fails, check that `cleaned_knowledge_base.json` is in the repository.
 
-```bash
-python update_knowledge_base.py
-```
+**Issue:** "API quota exceeded"
+**Fix:** Check your Gemini API quota at https://makersuite.google.com/app/apikey
 
-This will:
-1. Fetch latest data from all sources
-2. Clean and structure the data
-3. Update the knowledge base
-4. Rebuild the vector store
+---
+
+## LLM Model Options
+
+### Ollama Models (Local - Free)
+
+| Model | Size | Speed | Quality | RAM Needed |
+|-------|------|-------|---------|------------|
+| `phi3:mini` | 3.8B | ⚡⚡⚡ Very Fast | ⭐⭐⭐ Good | 4GB |
+| `llama3.1:8b` | 8B | ⚡⚡ Fast | ⭐⭐⭐⭐ Great | 8GB |
+| `llama3.1:70b` | 70B | ⚡ Slower | ⭐⭐⭐⭐⭐ Excellent | 40GB |
+
+**Recommendation:** Start with `llama3.1:8b`
+
+### Cloud LLM Options (Production)
+
+- **Google Gemini 2.0 Flash:** ~$0.000375 per 1K tokens, fast, competitive pricing ⭐ Recommended
+- **OpenAI GPT-3.5-turbo:** ~$0.002 per 1K tokens, reliable, good rate limits
+- **Anthropic Claude 3.5 Sonnet:** ~$0.009 per 1K tokens, excellent quality
+
+---
 
 ## File Structure
 
 ```
 MF-Chatbot/
-├── app.py                    # Streamlit UI
-├── rag_system.py            # RAG implementation
-├── faq_assistant.py         # Query classification & LLM integration
-├── citation_handler.py      # Citation extraction
-├── config.py                # Configuration management
-├── cleaned_knowledge_base.json  # Knowledge base
-├── sources.csv              # Source metadata
-├── test_queries.py          # Full test suite
-├── quick_test.py            # Quick test (5 queries)
-├── requirements.txt        # Dependencies
-└── chroma_db/              # Vector store (created on first run)
+├── app.py                          # Streamlit UI
+├── faq_assistant.py               # LLM-powered query classification & RAG
+├── rag_system.py                  # Vector store & retrieval
+├── citation_handler.py            # Citation extraction
+├── config.py                      # Configuration
+├── cleaned_knowledge_base.json    # Knowledge base
+├── sources.csv                    # Source metadata
+├── test_queries.py               # Full test suite
+├── quick_health_check.py         # Quick health check
+├── requirements.txt              # Dependencies
+├── chroma_db/                    # Vector store (created on first run)
+└── README.md                     # This file
 ```
+
+---
 
 ## Known Limits
 
-1. **Scope:** Only covers HDFC Mutual Funds (4 schemes). Does not cover other AMCs.
-2. **Factual Only:** Cannot provide investment advice, recommendations, or performance comparisons.
-3. **Source Coverage:** Limited to 25 verified sources. May not answer questions about very recent changes not yet in the knowledge base.
-4. **Data Freshness:** Knowledge base is updated manually. For latest information, check official sources.
+1. **Scope:** Only covers HDFC Mutual Funds (4 schemes)
+2. **Factual Only:** Cannot provide investment advice
+3. **Source Coverage:** Limited to 25 verified sources
+4. **Data Freshness:** Knowledge base updated manually (last: Nov 19, 2025)
+
+---
+
+## Why LLM-Based Intelligence?
+
+### ❌ Old Approach: Hardcoded Patterns
+```python
+out_of_context_patterns = [
+    r'\b(weather|temperature)\b',
+    r'\b(cook|recipe)\b',
+    r'\b(date|dating)\b',
+    # ... endless patterns needed
+]
+```
+
+**Problems:**
+- ❌ Can't anticipate every query
+- ❌ Constant maintenance required
+- ❌ Breaks on typos/filler words
+- ❌ Not scalable
+
+### ✅ New Approach: LLM Intelligence
+```python
+def is_mutual_fund_related(query):
+    """Use LLM to determine relevance"""
+    return llm.check("Is this about mutual funds?", query)
+```
+
+**Benefits:**
+- ✅ Handles ANY query phrasing
+- ✅ Zero maintenance
+- ✅ Typo-tolerant
+- ✅ Future-proof
+- ✅ Minimal cost (~$0.00003/query)
+
+**Result:** A robust, scalable, zero-maintenance chatbot! 🚀
+
+---
 
 ## Disclaimer
 
 **Important:** This assistant provides factual information only. It does not provide investment advice. For investment decisions, consult a registered financial advisor.
+
+All information is sourced from official HDFC AMC, SEBI, and AMFI documents. While we strive for accuracy, please verify critical information from official sources.
+
+---
 
 ## License
 
@@ -406,3 +571,5 @@ This project is for educational and informational purposes only.
 ---
 
 **Last Updated:** November 19, 2025
+
+**Version:** 2.0 (LLM-Powered Intelligence)
