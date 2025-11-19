@@ -267,15 +267,25 @@ class FAQAssistant:
         # Check if query contains MF-related terms
         has_mf_terms = any(keyword in query_lower for keyword in mf_keywords)
         
-        # Out-of-context indicators
+        # Out-of-context indicators - expanded list
         out_of_context_patterns = [
-            r'capital of',
+            r'\bpm\b', r'prime minister', r'president', r'minister',
+            r'capital of', r'capital city',
             r'favorite sport', r'favourite sport',
             r'tell me a joke', r'joke',
             r'weather', r'temperature',
             r'what is your name', r'who are you',
             r'what time is it', r'what day is it',
-            r'how are you', r'how do you do'
+            r'how are you', r'how do you do',
+            r'who is (the )?(pm|president|ceo|founder|director)',
+            r'what is (the )?(population|area|size)',
+            r'when (is|was|will)',
+            r'where (is|was|are)',
+            r'(cricket|football|sports|movie|film|music)',
+            r'(recipe|food|cooking|restaurant)',
+            r'(technology|computer|phone|laptop)(?! fund)',
+            r'(game|gaming|video)',
+            r'(travel|tourism|hotel|flight)'
         ]
         
         # If it has out-of-context patterns and no MF terms, it's out of context
@@ -292,12 +302,13 @@ class FAQAssistant:
         if self.is_advice_query(query):
             return False
         
-        # If no MF terms and seems like a general question, might be out of context
-        # Use LLM for better detection if needed, but for now use simple heuristic
-        if not has_mf_terms and len(query.split()) < 5:
-            # Very short queries without MF terms might be out of context
-            # But be conservative - default to factual if unsure
-            return False
+        # If no MF terms, it's likely out of context
+        if not has_mf_terms:
+            # Check if it's a general knowledge question
+            general_patterns = [r'^who (is|was)', r'^what (is|was)', r'^when (is|was)', r'^where (is|was)', r'^why (is|was)', r'^how (is|was)']
+            is_general_question = any(re.search(pattern, query_lower) for pattern in general_patterns)
+            if is_general_question:
+                return True
         
         return False  # Default to factual if unsure
     
