@@ -37,6 +37,10 @@ class Config:
     KNOWLEDGE_BASE_PATH = os.getenv('KNOWLEDGE_BASE_PATH', 'cleaned_knowledge_base.json')
     VECTOR_STORE_PATH = os.getenv('VECTOR_STORE_PATH', './chroma_db')
     
+    # Query Classification
+    # Enable LLM-based classification for better intent understanding (costs extra LLM call)
+    USE_LLM_CLASSIFICATION = os.getenv('USE_LLM_CLASSIFICATION', 'true').lower() == 'true'
+    
     @classmethod
     def get_llm_config(cls) -> Dict[str, Any]:
         """Get LLM configuration based on environment"""

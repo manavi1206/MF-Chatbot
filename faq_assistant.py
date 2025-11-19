@@ -359,8 +359,47 @@ class FAQAssistant:
         
         return False  # Default to factual if unsure
     
+    def llm_classify_query(self, query: str) -> str:
+        """Use LLM to classify ambiguous queries for better intent understanding"""
+        classification_prompt = f"""Classify this user query into ONE category:
+
+Query: "{query}"
+
+Categories:
+1. greeting - User is saying hi, hello, or greeting
+2. coverage - User asking what funds/schemes/questions you cover or your capabilities
+3. factual - User wants factual information about mutual funds (expense ratio, SIP, exit load, etc.)
+4. advice - User seeking investment advice or recommendations (should I invest, which is better, etc.)
+5. out_of_context - Completely unrelated to mutual funds (politics, sports, jokes, random text/numbers, etc.)
+
+Return ONLY the category name (one word), nothing else.
+
+Category:"""
+        
+        try:
+            system_prompt = "You are a query classifier. Return only the category name."
+            classification = self._call_llm(classification_prompt, max_tokens=20, temperature=0.1, system_prompt=system_prompt)
+            classification = classification.strip().lower()
+            
+            # Validate the classification
+            valid_types = ['greeting', 'coverage', 'factual', 'advice', 'out_of_context']
+            if classification in valid_types:
+                return classification
+            
+            # If LLM returns something weird, fall back to 'factual'
+            return 'factual'
+        except Exception as e:
+            print(f"LLM classification failed: {e}, falling back to rule-based")
+            return None  # Signal to use rule-based classification
+    
     def classify_query_type(self, query: str) -> str:
-        """Classify query type: greeting, coverage, out_of_context, advice, or factual"""
+        """Classify query type: greeting, coverage, out_of_context, advice, or factual
+        
+        Uses hybrid approach:
+        1. First try rule-based classification (fast, predictable)
+        2. If uncertain AND LLM classification enabled, use LLM (better understanding)
+        """
+        # Quick rule-based checks first (no LLM cost)
         if self.is_greeting(query):
             return 'greeting'
         elif self.is_coverage_query(query):
@@ -369,8 +408,22 @@ class FAQAssistant:
             return 'advice'
         elif self.is_out_of_context(query):
             return 'out_of_context'
-        else:
-            return 'factual'
+        
+        # For potential factual queries, optionally use LLM to double-check
+        # This catches edge cases that rules might miss
+        try:
+            from config import Config
+            use_llm_classification = Config.USE_LLM_CLASSIFICATION
+        except:
+            use_llm_classification = True  # Default to enabled
+        
+        if use_llm_classification:
+            llm_classification = self.llm_classify_query(query)
+            if llm_classification:
+                return llm_classification
+        
+        # Default to factual if LLM classification disabled or fails
+        return 'factual'
     
     def handle_greeting(self) -> str:
         """Generate greeting response"""
