@@ -108,43 +108,72 @@ st.markdown("""
     
     /* Dark mode ONLY - override light colors */
     @media (prefers-color-scheme: dark) {
+        /* Target all chat message containers and their children */
+        [data-testid="stChatMessageContainer"] {
+            background-color: transparent !important;
+        }
+        
         /* User messages - dark gray */
-        .stChatMessage[data-testid="user-message"],
-        .stChatMessage[data-testid="user-message"] > div,
-        .stChatMessage[data-testid="user-message"] * {
+        .stChatMessage[data-testid="user-message"] {
             background-color: #262730 !important;
             border-color: #3D3D3D !important;
+        }
+        
+        .stChatMessage[data-testid="user-message"] div,
+        .stChatMessage[data-testid="user-message"] p,
+        .stChatMessage[data-testid="user-message"] span {
+            background-color: #262730 !important;
             color: #FAFAFA !important;
         }
         
         /* Assistant messages - darker gray */
-        .stChatMessage[data-testid="assistant-message"],
-        .stChatMessage[data-testid="assistant-message"] > div,
-        .stChatMessage[data-testid="assistant-message"] * {
+        .stChatMessage[data-testid="assistant-message"] {
             background-color: #1E1E1E !important;
             border-color: #3D3D3D !important;
+        }
+        
+        .stChatMessage[data-testid="assistant-message"] div,
+        .stChatMessage[data-testid="assistant-message"] p,
+        .stChatMessage[data-testid="assistant-message"] span {
+            background-color: #1E1E1E !important;
             color: #FAFAFA !important;
         }
         
-        /* Fallback for all chat messages */
-        .stChatMessage,
-        .stChatMessage > div,
-        .stChatMessage * {
+        /* All chat messages fallback */
+        .stChatMessage {
             background-color: #1E1E1E !important;
             border-color: #3D3D3D !important;
         }
         
+        .stChatMessage div:not(.stMarkdown),
+        .stChatMessage p,
+        .stChatMessage span {
+            background-color: inherit !important;
+            color: #FAFAFA !important;
+        }
+        
+        /* Markdown content specifically */
+        .stChatMessage .stMarkdown {
+            background-color: transparent !important;
+            color: #FAFAFA !important;
+        }
+        
         /* Keep links visible */
-        .stChatMessage a,
-        .stChatMessage[data-testid="user-message"] a,
-        .stChatMessage[data-testid="assistant-message"] a {
-            color: var(--groww-green) !important;
+        .stChatMessage a {
+            color: #00D09C !important;
+            background-color: transparent !important;
         }
         
         /* Citation blockquote */
         .stChatMessage blockquote {
-            border-left-color: var(--groww-green) !important;
+            background-color: transparent !important;
+            border-left-color: #00D09C !important;
             color: #CCCCCC !important;
+        }
+        
+        /* Avatar icons */
+        .stChatMessage .stAvatar {
+            background-color: transparent !important;
         }
     }
     
