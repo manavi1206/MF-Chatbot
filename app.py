@@ -108,21 +108,43 @@ st.markdown("""
     
     /* Dark mode ONLY - override light colors */
     @media (prefers-color-scheme: dark) {
+        /* User messages - dark gray */
         .stChatMessage[data-testid="user-message"],
-        .stChatMessage[data-testid="user-message"] > div {
+        .stChatMessage[data-testid="user-message"] > div,
+        .stChatMessage[data-testid="user-message"] * {
             background-color: #262730 !important;
             border-color: #3D3D3D !important;
+            color: #FAFAFA !important;
         }
         
+        /* Assistant messages - darker gray */
         .stChatMessage[data-testid="assistant-message"],
-        .stChatMessage[data-testid="assistant-message"] > div {
+        .stChatMessage[data-testid="assistant-message"] > div,
+        .stChatMessage[data-testid="assistant-message"] * {
+            background-color: #1E1E1E !important;
+            border-color: #3D3D3D !important;
+            color: #FAFAFA !important;
+        }
+        
+        /* Fallback for all chat messages */
+        .stChatMessage,
+        .stChatMessage > div,
+        .stChatMessage * {
             background-color: #1E1E1E !important;
             border-color: #3D3D3D !important;
         }
         
-        .stChatMessage {
-            background-color: #1E1E1E !important;
-            border-color: #3D3D3D !important;
+        /* Keep links visible */
+        .stChatMessage a,
+        .stChatMessage[data-testid="user-message"] a,
+        .stChatMessage[data-testid="assistant-message"] a {
+            color: var(--groww-green) !important;
+        }
+        
+        /* Citation blockquote */
+        .stChatMessage blockquote {
+            border-left-color: var(--groww-green) !important;
+            color: #CCCCCC !important;
         }
     }
     
