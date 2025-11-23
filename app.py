@@ -76,47 +76,48 @@ st.markdown("""
         border: none;
     }
     
-    /* Chat messages - User messages (darker shade) */
+    /* Chat messages - User messages */
     .stChatMessage[data-testid="user-message"] {
-        background-color: var(--bg-user) !important;
-        border: 0.5px solid var(--border-color) !important;
+        background-color: #FAFBFC;
+        border: 0.5px solid #EBEBEB;
         border-radius: 10px;
         padding: 0.875rem 1rem;
         margin-bottom: 0.5rem;
-        box-shadow: 0 1px 2px var(--shadow);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
     
     /* Chat messages - Assistant messages */
     .stChatMessage[data-testid="assistant-message"] {
-        background-color: var(--bg-assistant) !important;
-        border: 0.5px solid var(--border-color) !important;
+        background-color: #FFFFFF;
+        border: 0.5px solid #EBEBEB;
         border-radius: 10px;
         padding: 0.875rem 1rem;
         margin-bottom: 0.75rem;
-        box-shadow: 0 1px 2px var(--shadow);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
     
     /* All chat messages fallback */
     .stChatMessage {
-        background-color: var(--bg-assistant) !important;
-        border: 0.5px solid var(--border-color) !important;
+        background-color: #FFFFFF;
+        border: 0.5px solid #EBEBEB;
         border-radius: 10px;
         padding: 0.875rem 1rem;
         margin-bottom: 0.5rem;
-        box-shadow: 0 1px 2px var(--shadow);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
     
-    /* Dark mode overrides for Streamlit's default styles */
+    /* Dark mode ONLY - override light colors */
     @media (prefers-color-scheme: dark) {
-        /* Force dark backgrounds on chat messages */
         .stChatMessage[data-testid="user-message"],
         .stChatMessage[data-testid="user-message"] > div {
             background-color: #262730 !important;
+            border-color: #3D3D3D !important;
         }
         
         .stChatMessage[data-testid="assistant-message"],
         .stChatMessage[data-testid="assistant-message"] > div {
             background-color: #1E1E1E !important;
+            border-color: #3D3D3D !important;
         }
         
         .stChatMessage {
