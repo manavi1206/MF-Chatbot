@@ -199,6 +199,53 @@ st.markdown("""
         border-radius: 50%;
     }
 </style>
+
+<script>
+// Force dark mode styles with JavaScript (runs after Streamlit renders)
+(function() {
+    function applyDarkMode() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            const chatMessages = document.querySelectorAll('.stChatMessage');
+            
+            chatMessages.forEach(msg => {
+                const isUser = msg.getAttribute('data-testid') === 'user-message';
+                const bgColor = isUser ? '#262730' : '#1E1E1E';
+                
+                // Force background on message container
+                msg.style.setProperty('background-color', bgColor, 'important');
+                msg.style.setProperty('border-color', '#3D3D3D', 'important');
+                
+                // Force background on all nested elements
+                const allElements = msg.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (['DIV', 'P', 'SPAN', 'SECTION'].includes(el.tagName)) {
+                        el.style.setProperty('background-color', bgColor, 'important');
+                        el.style.setProperty('color', '#FAFAFA', 'important');
+                    }
+                });
+                
+                // Keep links green
+                msg.querySelectorAll('a').forEach(link => {
+                    link.style.setProperty('color', '#00D09C', 'important');
+                });
+            });
+        }
+    }
+    
+    // Run multiple times to catch async rendering
+    applyDarkMode();
+    setTimeout(applyDarkMode, 100);
+    setTimeout(applyDarkMode, 500);
+    setTimeout(applyDarkMode, 1000);
+    setTimeout(applyDarkMode, 2000);
+    
+    // Watch for new messages
+    const observer = new MutationObserver(() => {
+        setTimeout(applyDarkMode, 100);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
 """, unsafe_allow_html=True)
 
 # Initialize session state
