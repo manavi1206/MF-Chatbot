@@ -108,72 +108,55 @@ st.markdown("""
     
     /* Dark mode ONLY - override light colors */
     @media (prefers-color-scheme: dark) {
-        /* Target all chat message containers and their children */
-        [data-testid="stChatMessageContainer"] {
-            background-color: transparent !important;
-        }
-        
-        /* User messages - dark gray */
-        .stChatMessage[data-testid="user-message"] {
+        /* Target Streamlit's emotion-css classes - these have high specificity */
+        .stChatMessage[data-testid="user-message"],
+        .stChatMessage[data-testid="user-message"] [class*="st-emotion-cache"],
+        .stChatMessage[data-testid="user-message"] [class*="e1ypd8m70"] {
             background-color: #262730 !important;
             border-color: #3D3D3D !important;
         }
         
-        .stChatMessage[data-testid="user-message"] div,
-        .stChatMessage[data-testid="user-message"] p,
-        .stChatMessage[data-testid="user-message"] span {
-            background-color: #262730 !important;
-            color: #FAFAFA !important;
-        }
-        
-        /* Assistant messages - darker gray */
-        .stChatMessage[data-testid="assistant-message"] {
+        .stChatMessage[data-testid="assistant-message"],
+        .stChatMessage[data-testid="assistant-message"] [class*="st-emotion-cache"],
+        .stChatMessage[data-testid="assistant-message"] [class*="e1ypd8m70"] {
             background-color: #1E1E1E !important;
             border-color: #3D3D3D !important;
         }
         
-        .stChatMessage[data-testid="assistant-message"] div,
-        .stChatMessage[data-testid="assistant-message"] p,
-        .stChatMessage[data-testid="assistant-message"] span {
-            background-color: #1E1E1E !important;
-            color: #FAFAFA !important;
-        }
-        
-        /* All chat messages fallback */
-        .stChatMessage {
+        /* All chat messages - target emotion classes */
+        .stChatMessage,
+        .stChatMessage [class*="st-emotion-cache"] {
             background-color: #1E1E1E !important;
             border-color: #3D3D3D !important;
         }
         
-        .stChatMessage div:not(.stMarkdown),
-        .stChatMessage p,
-        .stChatMessage span {
-            background-color: inherit !important;
+        /* Text color for all content */
+        .stChatMessage[data-testid="user-message"] *,
+        .stChatMessage[data-testid="assistant-message"] *,
+        .stChatMessage * {
             color: #FAFAFA !important;
         }
         
-        /* Markdown content specifically */
-        .stChatMessage .stMarkdown {
+        /* Markdown content */
+        .stChatMessage .stMarkdown,
+        .stChatMessage .stMarkdown * {
             background-color: transparent !important;
             color: #FAFAFA !important;
         }
         
         /* Keep links visible */
-        .stChatMessage a {
+        .stChatMessage a,
+        .stChatMessage a * {
             color: #00D09C !important;
             background-color: transparent !important;
         }
         
         /* Citation blockquote */
-        .stChatMessage blockquote {
+        .stChatMessage blockquote,
+        .stChatMessage blockquote * {
             background-color: transparent !important;
             border-left-color: #00D09C !important;
             color: #CCCCCC !important;
-        }
-        
-        /* Avatar icons */
-        .stChatMessage .stAvatar {
-            background-color: transparent !important;
         }
     }
     
